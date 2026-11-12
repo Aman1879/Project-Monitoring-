@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Layout Preview - Project Monitoring Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="h4 fw-bold text-dark mb-1">UI Layout & Base Template Preview</h2>
+            <p class="text-muted small mb-0">Step 3 verification: Base template inheritance, Bootstrap 5 CDN, and sidebar.</p>
+        </div>
+        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+            <i class="bi bi-check-circle me-1"></i> Step 3 Active
+        </span>
+    </div>
+
+    <!-- Preview Stat Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Projects</span>
+                        <h3 class="fw-bold mt-2 mb-0">12</h3>
+                    </div>
+                    <div class="rounded-3 p-3 bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-folder-fill fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Active Tasks</span>
+                        <h3 class="fw-bold mt-2 mb-0">48</h3>
+                    </div>
+                    <div class="rounded-3 p-3 bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-list-task fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Employees</span>
+                        <h3 class="fw-bold mt-2 mb-0">16</h3>
+                    </div>
+                    <div class="rounded-3 p-3 bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-people-fill fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Completed Tasks</span>
+                        <h3 class="fw-bold mt-2 mb-0">34</h3>
+                    </div>
+                    <div class="rounded-3 p-3 bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-check2-circle fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Card -->
+    <div class="card">
+        <div class="card-header bg-white py-3">
+            <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
+                <i class="bi bi-info-circle text-primary me-2"></i>Template Inheritance Verification
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                This page is rendered using <code>preview.html</code> which extends <code>base.html</code> via the Django Template tag <code>&#123;% extends 'base.html' %&#125;</code>.
+            </p>
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-light">
+                        <i class="bi bi-check2 text-success me-1"></i> <strong>Bootstrap 5:</strong> CDN Connected
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-light">
+                        <i class="bi bi-check2 text-success me-1"></i> <strong>Bootstrap Icons:</strong> Loaded
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 border rounded bg-light">
+                        <i class="bi bi-check2 text-success me-1"></i> <strong>Static CSS / JS:</strong> Configured
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

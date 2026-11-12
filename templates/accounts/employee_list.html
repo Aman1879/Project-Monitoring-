@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Employees - Project Monitoring Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header with Action Button -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h1 class="h3 fw-bold text-dark mb-1">Employees</h1>
+            <p class="text-muted small mb-0">Manage organization staff, department assignments, and login credentials.</p>
+        </div>
+        <div>
+            {% if request.user.is_staff %}
+                <a href="{% url 'accounts:employee_create' %}" class="btn btn-primary shadow-sm">
+                    <i class="bi bi-person-plus-fill me-1"></i> Add New Employee
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="card mb-4">
+        <div class="card-body p-3">
+            <form method="GET" action="{% url 'accounts:employee_list' %}" class="row g-2 align-items-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" 
+                               name="q" 
+                               class="form-control border-start-0" 
+                               placeholder="Search by name, ID, or department..." 
+                               value="{{ search_query }}">
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-secondary">
+                        <i class="bi bi-funnel me-1"></i> Filter
+                    </button>
+                    {% if search_query %}
+                        <a href="{% url 'accounts:employee_list' %}" class="btn btn-outline-secondary ms-1">
+                            <i class="bi bi-x-circle me-1"></i> Clear
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Employee Table Card -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small text-uppercase">
+                        <tr>
+                            <th class="ps-4">Employee Name</th>
+                            <th>Employee ID</th>
+                            <th>Department</th>
+                            <th>Designation</th>
+                            <th>Email Address</th>
+                            <th class="pe-4 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in employees %}
+                            <tr>
+                                <td class="ps-4">
+                                    <a href="{% url 'accounts:employee_detail' emp.pk %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center">
+                                        <i class="bi bi-person-circle fs-5 text-secondary me-2"></i>
+                                        <span>{{ emp.user.get_full_name|default:emp.user.username }}</span>
+                                    </a>
+                                    <small class="text-muted d-block ps-4">@{{ emp.user.username }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border font-monospace">
+                                        {{ emp.employee_id }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary">
+                                        {{ emp.department }}
+                                    </span>
+                                </td>
+                                <td class="small text-muted">{{ emp.designation }}</td>
+                                <td class="small text-muted">
+                                    {% if emp.user.email %}
+                                        <i class="bi bi-envelope me-1"></i>{{ emp.user.email }}
+                                    {% else %}
+                                        <span class="fst-italic text-secondary">None</span>
+                                    {% endif %}
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'accounts:employee_detail' emp.pk %}" class="btn btn-outline-secondary" title="View Profile">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        {% if request.user.is_staff %}
+                                            <a href="{% url 'accounts:employee_update' emp.pk %}" class="btn btn-outline-primary" title="Edit Employee">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            {% if emp.user != request.user %}
+                                                <a href="{% url 'accounts:employee_delete' emp.pk %}" class="btn btn-outline-danger" title="Delete Employee">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="bi bi-people fs-1 d-block mb-2 text-secondary"></i>
+                                    {% if search_query %}
+                                        <p class="mb-1 fw-semibold">No employees matching "{{ search_query }}"</p>
+                                        <a href="{% url 'accounts:employee_list' %}" class="btn btn-sm btn-outline-primary mt-2">View all employees</a>
+                                    {% else %}
+                                        <p class="mb-1 fw-semibold">No employees registered</p>
+                                        <p class="small text-muted mb-3">Add employees to assign them projects and tasks.</p>
+                                        {% if request.user.is_staff %}
+                                            <a href="{% url 'accounts:employee_create' %}" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-person-plus-fill me-1"></i> Add Employee
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

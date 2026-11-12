@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Project Monitoring Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Dashboard Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h1 class="h3 fw-bold text-dark mb-1">Admin Dashboard</h1>
+            <p class="text-muted small mb-0">
+                Welcome back, <span class="fw-semibold text-primary">{{ request.user.get_full_name|default:request.user.username }}</span>. Here is the operational overview of all projects and tasks.
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-calendar3 me-1 text-primary"></i> Today: {% now "M d, Y" %}
+            </span>
+        </div>
+    </div>
+
+    <!-- 1. Top Core Metric Cards (Row 1) -->
+    <div class="row g-3 mb-4">
+        <!-- Total Projects -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Projects</span>
+                        <h2 class="fw-bold mt-2 mb-1">{{ total_projects }}</h2>
+                        <span class="text-muted small">
+                            <span class="text-primary fw-semibold">{{ projects_in_progress }}</span> In Progress &bull; 
+                            <span class="text-success fw-semibold">{{ completed_projects }}</span> Done
+                        </span>
+                    </div>
+                    <div class="rounded-3 p-3 bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-folder2-open fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Tasks -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Tasks</span>
+                        <h2 class="fw-bold mt-2 mb-1">{{ total_tasks }}</h2>
+                        <span class="text-muted small">
+                            <span class="text-success fw-semibold">{{ completed_tasks }}</span> Completed
+                        </span>
+                    </div>
+                    <div class="rounded-3 p-3 bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-list-check fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdue Tasks -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100 p-3 {% if overdue_tasks > 0 %}border-danger border-opacity-50{% endif %}">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Overdue Tasks</span>
+                        <h2 class="fw-bold mt-2 mb-1 {% if overdue_tasks > 0 %}text-danger{% endif %}">{{ overdue_tasks }}</h2>
+                        <span class="small {% if overdue_tasks > 0 %}text-danger fw-semibold{% else %}text-muted{% endif %}">
+                            {% if overdue_tasks > 0 %}
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i> Requires Immediate Attention
+                            {% else %}
+                                <i class="bi bi-check-circle me-1 text-success"></i> No overdue tasks
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="rounded-3 p-3 bg-danger bg-opacity-10 text-danger">
+                        <i class="bi bi-alarm-fill fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Employees -->
+        <div class="col-sm-6 col-xl-3">
+            <div class="card h-100 p-3">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Total Employees</span>
+                        <h2 class="fw-bold mt-2 mb-1">{{ total_employees }}</h2>
+                        <span class="text-muted small">Active Team Members</span>
+                    </div>
+                    <div class="rounded-3 p-3 bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-people-fill fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Task Status Breakdown Badges (Row 2) -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card p-3 border-start border-4 border-secondary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">Pending Tasks</span>
+                        <h4 class="fw-bold mb-0 mt-1">{{ pending_tasks }}</h4>
+                    </div>
+                    <span class="badge bg-secondary-subtle text-secondary fs-6 px-3 py-2 rounded-pill">
+                        <i class="bi bi-hourglass-split me-1"></i> Pending
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border-start border-4 border-primary">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">In Progress Tasks</span>
+                        <h4 class="fw-bold mb-0 mt-1">{{ in_progress_tasks }}</h4>
+                    </div>
+                    <span class="badge bg-primary-subtle text-primary fs-6 px-3 py-2 rounded-pill">
+                        <i class="bi bi-arrow-repeat me-1"></i> In Progress
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-3 border-start border-4 border-success">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <span class="text-muted small text-uppercase fw-semibold">Completed Tasks</span>
+                        <h4 class="fw-bold mb-0 mt-1">{{ completed_tasks }}</h4>
+                    </div>
+                    <span class="badge bg-success-subtle text-success fs-6 px-3 py-2 rounded-pill">
+                        <i class="bi bi-check2-circle me-1"></i> Completed
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Project Progress Tracking Section (Row 3) -->
+    <div class="card mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
+                <i class="bi bi-bar-chart-steps text-primary me-2"></i>Project Progress Tracking
+            </h5>
+            <span class="badge bg-light text-muted border">Completed Task %</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small text-uppercase">
+                        <tr>
+                            <th class="ps-4">Project Name</th>
+                            <th>Status</th>
+                            <th>Tasks Completion</th>
+                            <th style="min-width: 220px;">Progress</th>
+                            <th class="pe-4 text-end">Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects_with_progress %}
+                            <tr>
+                                <td class="ps-4 fw-semibold text-dark">
+                                    <i class="bi bi-folder2 text-secondary me-2"></i>{{ project.name }}
+                                </td>
+                                <td>
+                                    {% if project.status == 'Completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% elif project.status == 'In Progress' %}
+                                        <span class="badge bg-primary">In Progress</span>
+                                    {% elif project.status == 'Planning' %}
+                                        <span class="badge bg-info text-dark">Planning</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">{{ project.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">
+                                    <span class="fw-semibold text-dark">{{ project.completed_tasks_count }}</span> of {{ project.total_tasks_count }} tasks
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height: 8px;">
+                                            <div class="progress-bar {% if project.progress == 100 %}bg-success{% elif project.progress >= 50 %}bg-primary{% elif project.progress > 0 %}bg-info{% else %}bg-secondary{% endif %}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ project.progress }}%;" 
+                                                 aria-valuenow="{{ project.progress }}" 
+                                                 aria-valuemin="0" 
+                                                 aria-valuemax="100">
+                                            </div>
+                                        </div>
+                                        <span class="small fw-bold text-secondary" style="min-width: 38px;">{{ project.progress }}%</span>
+                                    </div>
+                                </td>
+                                <td class="pe-4 text-end small text-muted">
+                                    <i class="bi bi-calendar-event me-1"></i>{{ project.deadline|date:"M d, Y" }}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-3 d-block mb-2 text-secondary"></i>
+                                    No projects created yet. Use the admin panel to create your first project.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Recent Projects & Recent Tasks (Row 4) -->
+    <div class="row g-4">
+        <!-- Recent Projects -->
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
+                        <i class="bi bi-clock-history text-primary me-2"></i>Recent Projects
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary small text-uppercase">
+                                <tr>
+                                    <th class="ps-3">Name</th>
+                                    <th>Status</th>
+                                    <th class="pe-3 text-end">Deadline</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in recent_projects %}
+                                    <tr>
+                                        <td class="ps-3 fw-semibold text-dark">{{ project.name }}</td>
+                                        <td>
+                                            {% if project.status == 'Completed' %}
+                                                <span class="badge bg-success small">Completed</span>
+                                            {% elif project.status == 'In Progress' %}
+                                                <span class="badge bg-primary small">In Progress</span>
+                                            {% elif project.status == 'Planning' %}
+                                                <span class="badge bg-info text-dark small">Planning</span>
+                                            {% else %}
+                                                <span class="badge bg-warning text-dark small">{{ project.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="pe-3 text-end small text-muted">{{ project.deadline|date:"M d, Y" }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted small">No recent projects</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Tasks -->
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
+                        <i class="bi bi-list-task text-primary me-2"></i>Recent Tasks
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-secondary small text-uppercase">
+                                <tr>
+                                    <th class="ps-3">Task</th>
+                                    <th>Project</th>
+                                    <th>Assigned To</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th class="pe-3 text-end">Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in recent_tasks %}
+                                    <tr>
+                                        <td class="ps-3 fw-semibold text-dark">{{ task.title }}</td>
+                                        <td class="small text-muted">{{ task.project.name }}</td>
+                                        <td class="small">
+                                            {% if task.assigned_to %}
+                                                <span class="badge bg-light text-dark border">
+                                                    <i class="bi bi-person me-1"></i>{{ task.assigned_to.user.get_full_name|default:task.assigned_to.user.username }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted small fst-italic">Unassigned</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.priority == 'High' %}
+                                                <span class="badge bg-danger small">High</span>
+                                            {% elif task.priority == 'Medium' %}
+                                                <span class="badge bg-warning text-dark small">Medium</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary small">Low</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.status == 'Completed' %}
+                                                <span class="badge bg-success small">Completed</span>
+                                            {% elif task.status == 'In Progress' %}
+                                                <span class="badge bg-primary small">In Progress</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary small">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="pe-3 text-end small text-muted">{{ task.due_date|date:"M d, Y" }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted small">No recent tasks</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

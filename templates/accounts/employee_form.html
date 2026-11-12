@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action_title }} - Project Monitoring Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header with Back Link -->
+    <div class="mb-4">
+        <a href="{% url 'accounts:employee_list' %}" class="text-decoration-none text-muted small d-inline-flex align-items-center mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Employees
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">{{ action_title }}</h1>
+        <p class="text-muted small mb-0">Fill in the employee's personal and organizational details below.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Non-Field Validation Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Section 1: User Account Credentials -->
+                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                            <i class="bi bi-shield-lock me-1"></i> Authentication & Account Credentials
+                        </h6>
+
+                        {% if not is_edit %}
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="{{ form.username.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                        Username <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.username }}
+                                    {% if form.username.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.username.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="{{ form.password.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                        Password <span class="text-danger">*</span>
+                                    </label>
+                                    {{ form.password }}
+                                    {% if form.password.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {% for error in form.password.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-light border small py-2 mb-3">
+                                <i class="bi bi-person-badge text-primary me-1"></i>
+                                Linked Login Account: <strong>@{{ employee.user.username }}</strong>
+                                <span class="text-muted ms-2">(Password is securely retained and not modified here)</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-semibold text-secondary small">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.first_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.last_name.id_for_label }}" class="form-label fw-semibold text-secondary small">Last Name</label>
+                                {{ form.last_name }}
+                                {% if form.last_name.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.last_name.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold text-secondary small">Email Address</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Employee Profile -->
+                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+                            <i class="bi bi-briefcase me-1"></i> Employment Profile
+                        </h6>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.employee_id.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Employee ID <span class="text-danger">*</span>
+                                </label>
+                                {{ form.employee_id }}
+                                {% if form.employee_id.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.employee_id.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label fw-semibold text-secondary small">Phone Number</label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.phone.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="{{ form.department.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Department <span class="text-danger">*</span>
+                                </label>
+                                {{ form.department }}
+                                {% if form.department.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.department.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.designation.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Designation <span class="text-danger">*</span>
+                                </label>
+                                {{ form.designation }}
+                                {% if form.designation.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.designation.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.date_joined.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Date Joined <span class="text-danger">*</span>
+                                </label>
+                                {{ form.date_joined }}
+                                {% if form.date_joined.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.date_joined.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex align-items-center gap-2 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check2-circle me-1"></i>
+                                {% if is_edit %}Save Changes{% else %}Register Employee{% endif %}
+                            </button>
+                            <a href="{% url 'accounts:employee_list' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Helper Card -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card bg-light border-0">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-2">
+                        <i class="bi bi-info-circle text-primary me-1"></i> Architecture Notes
+                    </h6>
+                    <ul class="text-muted small ps-3 mb-0">
+                        <li class="mb-2"><strong>User Linking:</strong> A Django <code>auth_user</code> login account is automatically connected to this <code>Employee</code> profile.</li>
+                        <li class="mb-2"><strong>Password Security:</strong> Passwords are encrypted using standard PBKDF2/SHA256 password hashing before being saved.</li>
+                        <li class="mb-2"><strong>Atomic Transactions:</strong> User and Employee records are created inside an atomic block, so if either fails, no partial record is kept.</li>
+                        <li><strong>Standard Access:</strong> Newly created employees have standard access; administrator privileges (<code>is_staff</code>) are not granted by default.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

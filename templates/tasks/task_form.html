@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action_title }} - Project Monitoring Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header with Back Link -->
+    <div class="mb-4">
+        <a href="{% url 'tasks:task_list' %}" class="text-decoration-none text-muted small d-inline-flex align-items-center mb-2">
+            <i class="bi bi-arrow-left me-1"></i> Back to Tasks
+        </a>
+        <h1 class="h3 fw-bold text-dark mb-1">{{ action_title }}</h1>
+        <p class="text-muted small mb-0">Configure task specifications, priority, deadline, and assign team members.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        <!-- Non-Field Validation Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger py-2 small" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    <div><i class="bi bi-exclamation-triangle-fill me-1"></i> {{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Task Title -->
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                Task Title <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.title.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                Description
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in form.description.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Project & Assignee Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.project.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Project <span class="text-danger">*</span>
+                                </label>
+                                {{ form.project }}
+                                {% if form.project.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.project.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.assigned_to.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Assign To Employee
+                                </label>
+                                {{ form.assigned_to }}
+                                {% if form.assigned_to.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.assigned_to.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Priority & Status Row -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.priority.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Priority Level <span class="text-danger">*</span>
+                                </label>
+                                {{ form.priority }}
+                                {% if form.priority.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.priority.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.status.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Status <span class="text-danger">*</span>
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.status.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Dates Row: Start Date & Due Date -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.start_date.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Start Date <span class="text-danger">*</span>
+                                </label>
+                                {{ form.start_date }}
+                                {% if form.start_date.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.start_date.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.due_date.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Due Date <span class="text-danger">*</span>
+                                </label>
+                                {{ form.due_date }}
+                                {% if form.due_date.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {% for error in form.due_date.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex align-items-center gap-2 pt-3 border-top">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check2-circle me-1"></i>
+                                {% if is_edit %}Save Changes{% else %}Create Task{% endif %}
+                            </button>
+                            <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Guidelines -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card bg-light border-0">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold text-dark mb-2">
+                        <i class="bi bi-info-circle text-primary me-1"></i> Task Management Rules
+                    </h6>
+                    <ul class="text-muted small ps-3 mb-0">
+                        <li class="mb-2"><strong>Due Date Rule:</strong> The task due date cannot be earlier than its start date.</li>
+                        <li class="mb-2"><strong>Assignment:</strong> Assigning a task links it to the employee's personal dashboard.</li>
+                        <li class="mb-2"><strong>Regular Staff Access:</strong> Assigned employees can update their task status (Pending &rarr; In Progress &rarr; Completed) without full edit permissions.</li>
+                        <li><strong>Cascading Progress:</strong> Completing tasks automatically increases the overall completion progress of the associated project.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

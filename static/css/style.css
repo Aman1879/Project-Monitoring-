@@ -1,0 +1,181 @@
+/* ==========================================================================
+   Project Monitoring Platform - Custom Dashboard Styles
+   ========================================================================== */
+
+:root {
+    --primary-color: #1e3a8a;       /* Deep Navy Blue */
+    --secondary-color: #3b82f6;     /* Accent Blue */
+    --sidebar-bg: #0f172a;          /* Dark Navy */
+    --sidebar-hover: #1e293b;       /* Slate Dark Hover */
+    --sidebar-active: #2563eb;      /* Vibrant Active Blue */
+    --sidebar-text: #94a3b8;        /* Muted Slate Text */
+    --body-bg: #f8fafc;             /* Light Grayish Blue Background */
+    --card-border: #e2e8f0;         /* Subtle Border */
+    --sidebar-width: 260px;
+}
+
+body {
+    background-color: var(--body-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #1e293b;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   Layout Structure
+   ========================================================================== */
+#wrapper {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styles */
+#sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: #f8fafc;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    z-index: 1040;
+}
+
+#sidebar .sidebar-brand {
+    padding: 1.25rem 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#sidebar .sidebar-brand i {
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+}
+
+#sidebar .nav-item {
+    margin: 0.2rem 0.75rem;
+}
+
+#sidebar .nav-link {
+    color: var(--sidebar-text);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+#sidebar .nav-link i {
+    font-size: 1.2rem;
+    margin-right: 0.85rem;
+}
+
+#sidebar .nav-link:hover {
+    color: #ffffff;
+    background-color: var(--sidebar-hover);
+}
+
+#sidebar .nav-link.active {
+    color: #ffffff;
+    background-color: var(--sidebar-active);
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+}
+
+#sidebar .sidebar-heading {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08rem;
+    color: #64748b;
+    padding: 1rem 1.5rem 0.35rem;
+    font-weight: 700;
+}
+
+/* Page Content Area */
+#content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background-color: var(--body-bg);
+}
+
+#main-content {
+    flex: 1;
+    padding: 1.75rem 2rem;
+}
+
+/* ==========================================================================
+   Navbar Styles
+   ========================================================================== */
+.top-navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--card-border);
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.top-navbar .navbar-brand {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.user-profile-badge {
+    background-color: #eff6ff;
+    color: var(--primary-color);
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 2rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* ==========================================================================
+   Dashboard UI Elements (Cards, Badges, Tables)
+   ========================================================================== */
+.card {
+    border: 1px solid var(--card-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--card-border);
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+    #sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    #sidebar.show {
+        margin-left: 0;
+    }
+
+    #main-content {
+        padding: 1.25rem 1rem;
+    }
+}
+

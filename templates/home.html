@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}TrackPoint - Project Monitoring Platform{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Hero Banner Card -->
+    <div class="card border-0 text-white mb-4 shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); border-radius: 1rem;">
+        <div class="card-body p-4 p-md-5">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-primary bg-opacity-25 text-white border border-primary border-opacity-50 px-3 py-2 rounded-pill small mb-3 d-inline-flex align-items-center">
+                        <i class="bi bi-shield-check me-2"></i> INT253 Full-Stack Platform
+                    </span>
+                    <h1 class="display-6 fw-bold mb-3">Web-Based Integrated Project-Monitoring Platform</h1>
+                    <p class="lead text-white-50 mb-4" style="max-width: 650px;">
+                        TrackPoint provides administrators and engineering teams with a centralized platform to plan projects, assign tasks, track real-time completion progress, and meet deadlines.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg shadow-sm">
+                                <i class="bi bi-speedometer2 me-2"></i> Open Dashboard
+                            </a>
+                            <a href="{% url 'projects:project_list' %}" class="btn btn-outline-light btn-lg">
+                                <i class="bi bi-folder me-2"></i> Manage Projects
+                            </a>
+                        {% else %}
+                            <a href="{% url 'register' %}" class="btn btn-primary btn-lg shadow-sm">
+                                <i class="bi bi-person-plus-fill me-2"></i> Get Started (Register)
+                            </a>
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
+                                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-none d-lg-block text-center">
+                    <div class="p-4 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10 backdrop-blur">
+                        <i class="bi bi-kanban-fill text-primary display-1 opacity-75"></i>
+                        <h5 class="fw-bold text-white mt-3 mb-1">TrackPoint Architecture</h5>
+                        <p class="small text-white-50 mb-0">Django MVT &bull; Bootstrap 5 &bull; SQLite</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Metrics Overview (Public & Safe) -->
+    <div class="row g-3 mb-5">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-2" style="width: 56px; height: 56px;">
+                    <i class="bi bi-folder-check fs-4"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ total_projects }}</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Projects Monitored</span>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-2" style="width: 56px; height: 56px;">
+                    <i class="bi bi-check2-all fs-4"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ completed_projects }}</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Completed Initiatives</span>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-info bg-opacity-10 text-info mx-auto mb-2" style="width: 56px; height: 56px;">
+                    <i class="bi bi-hourglass-split fs-4"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ active_projects }}</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Active In-Progress</span>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card p-3 h-100 text-center">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-warning bg-opacity-10 text-warning mx-auto mb-2" style="width: 56px; height: 56px;">
+                    <i class="bi bi-list-task fs-4"></i>
+                </div>
+                <h3 class="fw-bold mb-1">{{ total_tasks }}</h3>
+                <span class="text-muted small text-uppercase fw-semibold">Tasks Tracked</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Capabilities Showcase -->
+    <div class="mb-5">
+        <div class="text-center mb-4">
+            <h2 class="h4 fw-bold text-dark mb-1">Integrated Capabilities</h2>
+            <p class="text-muted small">Everything required to organize projects and monitor team execution.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="bi bi-bar-chart-steps fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold fs-6 text-dark mb-2">Automated Progress</h5>
+                    <p class="text-muted small mb-0">
+                        Dynamic completion percentage calculated in real-time based on finished tasks per project.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="bi bi-people-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold fs-6 text-dark mb-2">Employee Directory</h5>
+                    <p class="text-muted small mb-0">
+                        Linked user accounts and department profiles with granular staff administrator authorization.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="bi bi-calendar-range-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold fs-6 text-dark mb-2">Deadline & Alarms</h5>
+                    <p class="text-muted small mb-0">
+                        Automatic detection of overdue milestones to ensure projects stay on schedule.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 p-4">
+                    <div class="text-primary mb-3">
+                        <i class="bi bi-shield-lock-fill fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold fs-6 text-dark mb-2">Secure Architecture</h5>
+                    <p class="text-muted small mb-0">
+                        CSRF tokens on all POST requests, PBKDF2 password encryption, and atomic database transactions.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workflow Section -->
+    <div class="card bg-light border-0 p-4 mb-4">
+        <div class="row g-4 align-items-center">
+            <div class="col-md-4 text-center">
+                <div class="p-3 bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 64px; height: 64px;">
+                    <span class="fs-4 fw-bold text-primary">1</span>
+                </div>
+                <h6 class="fw-bold mt-2 mb-1">Create Projects</h6>
+                <p class="small text-muted mb-0">Define timelines, target deadlines, and status goals.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="p-3 bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 64px; height: 64px;">
+                    <span class="fs-4 fw-bold text-primary">2</span>
+                </div>
+                <h6 class="fw-bold mt-2 mb-1">Delegate Tasks</h6>
+                <p class="small text-muted mb-0">Assign tasks with priorities and deadlines to employees.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="p-3 bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 64px; height: 64px;">
+                    <span class="fs-4 fw-bold text-primary">3</span>
+                </div>
+                <h6 class="fw-bold mt-2 mb-1">Monitor Operations</h6>
+                <p class="small text-muted mb-0">Review progress bars and overdue alarms on the dashboard.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,95 @@
+<aside id="sidebar">
+    <!-- Brand / Logo Header -->
+    <a href="{% url 'home' %}" class="sidebar-brand">
+        <i class="bi bi-diagram-3-fill me-2"></i>
+        <span>TrackPoint</span>
+    </a>
+
+    <!-- Sidebar Navigation Links -->
+    <ul class="nav nav-pills flex-column mt-3 mb-auto">
+        <li class="sidebar-heading">Portal Navigation</li>
+
+        <li class="nav-item">
+            <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                <i class="bi bi-house-door"></i>
+                <span>Home</span>
+            </a>
+        </li>
+
+        {% if request.user.is_authenticated %}
+            <li class="nav-item">
+                <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' or request.resolver_match.url_name == 'preview' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="sidebar-heading mt-2">Management</li>
+
+            <li class="nav-item">
+                <a href="{% url 'projects:project_list' %}" class="nav-link {% if request.resolver_match.app_name == 'projects' and request.resolver_match.url_name != 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-folder"></i>
+                    <span>Projects</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{% url 'accounts:employee_list' %}" class="nav-link {% if request.resolver_match.app_name == 'accounts' and 'employee' in request.resolver_match.url_name %}active{% endif %}">
+                    <i class="bi bi-people"></i>
+                    <span>Employees</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{% url 'tasks:task_list' %}" class="nav-link {% if request.resolver_match.app_name == 'tasks' %}active{% endif %}">
+                    <i class="bi bi-check2-square"></i>
+                    <span>Tasks</span>
+                </a>
+            </li>
+
+            <li class="sidebar-heading mt-2">Analytics & System</li>
+
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+
+            <li class="nav-item mt-3">
+                <hr class="dropdown-divider bg-secondary opacity-25 mx-3">
+            </li>
+
+            <li class="nav-item">
+                <!-- Secure POST Form Logout for Sidebar -->
+                <form method="POST" action="{% url 'accounts:logout' %}" class="m-0 p-0">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link text-danger border-0 bg-transparent w-100 text-start">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </li>
+        {% else %}
+            <li class="sidebar-heading mt-2">Get Started</li>
+            <li class="nav-item">
+                <a href="{% url 'accounts:login' %}" class="nav-link">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Login</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'register' %}" class="nav-link">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Register</span>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+
+    <!-- Footer / Version Info -->
+    <div class="p-3 text-muted small border-top border-secondary border-opacity-10">
+        <span class="d-block text-white-50">Project Monitor v1.0</span>
+        <span class="text-secondary">College Mini-Project</span>
+    </div>
+</aside>

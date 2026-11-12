@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ task.title }} - Task Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header with Breadcrumbs & Action Buttons -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <a href="{% url 'tasks:task_list' %}" class="text-decoration-none text-muted small d-inline-flex align-items-center mb-1">
+                <i class="bi bi-arrow-left me-1"></i> Back to Tasks
+            </a>
+            <h1 class="h3 fw-bold text-dark mb-0 d-flex align-items-center">
+                <i class="bi bi-check2-square text-primary me-2"></i>{{ task.title }}
+            </h1>
+        </div>
+        <div class="btn-group shadow-sm">
+            {% if request.user.is_staff %}
+                <a href="{% url 'tasks:task_update_status' task.pk %}" class="btn btn-outline-success">
+                    <i class="bi bi-arrow-repeat me-1"></i> Change Status
+                </a>
+                <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-outline-primary">
+                    <i class="bi bi-pencil me-1"></i> Edit Task
+                </a>
+                <a href="{% url 'tasks:task_delete' task.pk %}" class="btn btn-outline-danger">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </a>
+            {% elif is_assigned_to_current_user %}
+                <a href="{% url 'tasks:task_update_status' task.pk %}" class="btn btn-primary">
+                    <i class="bi bi-arrow-repeat me-1"></i> Update Status
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Task Details Grid -->
+    <div class="row g-4 mb-4">
+        <!-- Overview & Description -->
+        <div class="col-lg-8">
+            <div class="card h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
+                        <i class="bi bi-file-earmark-text text-primary me-2"></i>Task Specifications
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <h6 class="text-secondary small text-uppercase fw-semibold mb-2">Description</h6>
+                    <p class="text-muted mb-4">
+                        {{ task.description|default:"No detailed specifications provided for this task."|linebreaks }}
+                    </p>
+
+                    <div class="row g-3 border-top pt-3 small text-secondary">
+                        <div class="col-sm-6">
+                            <i class="bi bi-clock-history me-1"></i> Created: {{ task.created_at|date:"M d, Y H:i" }}
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <i class="bi bi-pencil-square me-1"></i> Last updated: {{ task.updated_at|date:"M d, Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Metadata Card -->
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
+                        <i class="bi bi-info-circle text-primary me-2"></i>Status & Assignment
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Status -->
+                    <div class="mb-3 pb-3 border-bottom">
+                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Status</span>
+                        {% if task.status == 'Completed' %}
+                            <span class="badge bg-success fs-6">Completed</span>
+                        {% elif task.status == 'In Progress' %}
+                            <span class="badge bg-primary fs-6">In Progress</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">Pending</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Priority -->
+                    <div class="mb-3 pb-3 border-bottom">
+                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Priority Level</span>
+                        {% if task.priority == 'High' %}
+                            <span class="badge bg-danger fs-6">High Priority</span>
+                        {% elif task.priority == 'Medium' %}
+                            <span class="badge bg-warning text-dark fs-6">Medium Priority</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">Low Priority</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Project -->
+                    <div class="mb-3 pb-3 border-bottom">
+                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Associated Project</span>
+                        <a href="{% url 'projects:project_detail' task.project.pk %}" class="fw-bold text-primary text-decoration-none d-flex align-items-center">
+                            <i class="bi bi-folder2 text-secondary me-2"></i>{{ task.project.name }}
+                        </a>
+                    </div>
+
+                    <!-- Assigned Employee -->
+                    <div class="mb-3 pb-3 border-bottom">
+                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Assigned Employee</span>
+                        {% if task.assigned_to %}
+                            <div class="d-flex align-items-center mt-1">
+                                <i class="bi bi-person-circle fs-4 text-secondary me-2"></i>
+                                <div>
+                                    <span class="fw-bold d-block text-dark">
+                                        {{ task.assigned_to.user.get_full_name|default:task.assigned_to.user.username }}
+                                    </span>
+                                    <span class="badge bg-light text-muted border font-monospace small">
+                                        {{ task.assigned_to.employee_id }} &bull; {{ task.assigned_to.department }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% else %}
+                            <span class="text-muted fst-italic">Unassigned</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Timeline Dates -->
+                    <div class="mb-2">
+                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Timeline Schedule</span>
+                        <div class="small text-secondary mb-1">
+                            <i class="bi bi-calendar-check me-1 text-primary"></i> <strong>Start:</strong> {{ task.start_date|date:"F d, Y" }}
+                        </div>
+                        <div class="small text-secondary">
+                            <i class="bi bi-calendar-event me-1 text-danger"></i> <strong>Due Date:</strong> {{ task.due_date|date:"F d, Y" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
