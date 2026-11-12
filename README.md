@@ -1,8 +1,12 @@
 # Web-Based Integrated Project-Monitoring Platform
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-blue?style=for-the-badge&logo=render)](https://project-monitoring-7hqn.onrender.com/)
+
 A full-featured web-based project monitoring and task management application built using **Django**, **Python**, **Bootstrap 5**, and **SQLite**.
 
 Designed for teams, administrators, and project managers to plan projects, assign tasks, track employee workloads, monitor deadlines, and visualize progress through an interactive real-time dashboard.
+
+🌐 **Live Deployed Website**: [https://project-monitoring-7hqn.onrender.com/](https://project-monitoring-7hqn.onrender.com/)
 
 ---
 
@@ -147,6 +151,8 @@ Visit `http://127.0.0.1:8000/` in your browser.
 ---
 
 ## 🌐 Deployment on Render
+
+- **Live URL**: [https://project-monitoring-7hqn.onrender.com/](https://project-monitoring-7hqn.onrender.com/)
 
 This project is configured for deployment on [Render](https://render.com) using Gunicorn and WhiteNoise.
 
