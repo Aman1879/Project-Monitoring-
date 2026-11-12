@@ -146,6 +146,28 @@ Visit `http://127.0.0.1:8000/` in your browser.
 
 ---
 
+## 🌐 Deployment on Render
+
+This project is configured for deployment on [Render](https://render.com) using Gunicorn and WhiteNoise.
+
+In your Render Web Service settings:
+- **Environment**: `Python 3`
+- **Build Command**:
+  ```bash
+  pip install -r requirements.txt && python manage.py collectstatic --no-input
+  ```
+- **Start Command**:
+  ```bash
+  python manage.py migrate && gunicorn project_monitoring.wsgi:application
+  ```
+- **Environment Variables**:
+  - `PYTHON_VERSION`: `3.12.0`
+  - `DEBUG`: `False`
+  - `SECRET_KEY`: *(Generate in Render or provide a secure key)*
+  - `ALLOWED_HOSTS`: `.onrender.com`
+
+---
+
 ## 🧪 Running Automated Tests
 
 The platform includes a test suite with 59 automated test cases covering model relationships, form validations, role-based view permissions, and CRUD operations:
