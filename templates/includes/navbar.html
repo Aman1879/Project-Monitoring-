@@ -1,3 +1,4 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg top-navbar sticky-top">
     <div class="container-fluid px-0">
         <!-- Sidebar Toggle Button (Visible on mobile/tablet) -->
@@ -5,10 +6,11 @@
             <i class="bi bi-list fs-5"></i>
         </button>
 
-        <!-- Project Brand Title -->
-        <a href="{% url 'home' %}" class="navbar-brand mb-0 h1 fs-5 d-flex align-items-center text-decoration-none">
-            <i class="bi bi-kanban me-2 text-primary"></i>
-            Project Monitoring System
+        <!-- Project Brand Title & Logo -->
+        <a href="{% url 'home' %}" class="navbar-brand mb-0 h1 fs-5 d-flex align-items-center text-decoration-none" title="ORVEXA - Project Monitoring System">
+            <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="rounded-circle me-2 border border-light-outline-variant" style="width: 30px; height: 30px; object-fit: contain; background: #fff;">
+            <span class="fw-bold tracking-tight text-dark" style="font-family: 'Jost', sans-serif;">ORVEXA</span>
+            <span class="badge bg-light text-primary border border-primary border-opacity-25 ms-2 d-none d-md-inline-block small rounded-pill">Project Monitoring System</span>
         </a>
 
         <!-- Center / Quick Navigation Links -->
@@ -20,6 +22,12 @@
                 <a href="{% url 'dashboard' %}" class="nav-link px-2 {% if request.resolver_match.url_name == 'dashboard' %}text-primary fw-bold{% else %}text-secondary{% endif %}">
                     <i class="bi bi-speedometer2 me-1"></i> Dashboard
                 </a>
+                <a href="{% url 'projects:project_list' %}" class="nav-link px-2 {% if request.resolver_match.app_name == 'projects' and request.resolver_match.url_name != 'dashboard' %}text-primary fw-bold{% else %}text-secondary{% endif %}">
+                    <i class="bi bi-folder me-1"></i> Projects
+                </a>
+                <a href="{% url 'tasks:task_list' %}" class="nav-link px-2 {% if request.resolver_match.app_name == 'tasks' %}text-primary fw-bold{% else %}text-secondary{% endif %}">
+                    <i class="bi bi-check2-square me-1"></i> Tasks
+                </a>
             {% endif %}
         </div>
 
@@ -28,19 +36,37 @@
             {% if request.user.is_authenticated %}
                 <div class="dropdown">
                     <button class="btn user-profile-badge dropdown-toggle border-0" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle me-1 fs-5"></i>
+                        <i class="bi bi-person-circle me-1 fs-5 text-primary"></i>
                         <span>{{ request.user.username }}</span>
                         {% if request.user.is_staff %}
                             <span class="badge bg-primary ms-1 small">Admin</span>
+                        {% elif request.user.employee_profile %}
+                            <span class="badge bg-info text-dark ms-1 small">{{ request.user.employee_profile.designation }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary ms-1 small">Member</span>
                         {% endif %}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="userMenuButton">
                         <li class="dropdown-header text-muted small">Signed in as</li>
-                        <li class="px-3 pb-2 fw-semibold">{{ request.user.get_full_name|default:request.user.username }}</li>
+                        <li class="px-3 pb-1 fw-semibold text-dark">{{ request.user.get_full_name|default:request.user.username }}</li>
+                        <li class="px-3 pb-2 text-muted small">
+                            {% if request.user.is_staff %}
+                                <span class="badge bg-primary bg-opacity-10 text-primary">Administrator</span>
+                            {% elif request.user.employee_profile %}
+                                <span class="badge bg-info bg-opacity-10 text-dark">{{ request.user.employee_profile.designation }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary">Registered Member</span>
+                            {% endif %}
+                        </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item py-2" href="{% url 'dashboard' %}">
                                 <i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2" href="{% url 'projects:project_list' %}">
+                                <i class="bi bi-folder me-2 text-secondary"></i> Projects
                             </a>
                         </li>
                         <li>
@@ -61,10 +87,10 @@
                     </ul>
                 </div>
             {% else %}
-                <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-outline-primary">
+                <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-outline-primary px-3">
                     <i class="bi bi-box-arrow-in-right me-1"></i> Login
                 </a>
-                <a href="{% url 'register' %}" class="btn btn-sm btn-primary">
+                <a href="{% url 'register' %}" class="btn btn-sm btn-primary px-3 shadow-sm">
                     <i class="bi bi-person-plus-fill me-1"></i> Register
                 </a>
             {% endif %}

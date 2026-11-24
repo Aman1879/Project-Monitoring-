@@ -89,6 +89,27 @@ def dashboard_view(request):
 
         projects_with_progress.append(project)
 
+    # 8. Role & Personal Workstation Statistics
+    user = request.user
+    is_staff = user.is_staff or user.is_superuser
+    employee = getattr(user, 'employee_profile', None)
+
+    if employee:
+        my_tasks_qs = Task.objects.filter(assigned_to=employee).select_related('project')
+        my_total_tasks = my_tasks_qs.count()
+        my_pending_tasks = my_tasks_qs.filter(status='Pending').count()
+        my_in_progress_tasks = my_tasks_qs.filter(status='In Progress').count()
+        my_completed_tasks = my_tasks_qs.filter(status='Completed').count()
+        my_overdue_tasks = my_tasks_qs.filter(due_date__lt=today).exclude(status='Completed').count()
+        my_recent_tasks = my_tasks_qs.order_by('-created_at')[:5]
+    else:
+        my_total_tasks = 0
+        my_pending_tasks = 0
+        my_in_progress_tasks = 0
+        my_completed_tasks = 0
+        my_overdue_tasks = 0
+        my_recent_tasks = []
+
     context = {
         'total_projects': total_projects,
         'projects_in_progress': projects_in_progress,
@@ -102,6 +123,14 @@ def dashboard_view(request):
         'recent_projects': recent_projects,
         'recent_tasks': recent_tasks,
         'projects_with_progress': projects_with_progress,
+        'is_staff': is_staff,
+        'employee': employee,
+        'my_total_tasks': my_total_tasks,
+        'my_pending_tasks': my_pending_tasks,
+        'my_in_progress_tasks': my_in_progress_tasks,
+        'my_completed_tasks': my_completed_tasks,
+        'my_overdue_tasks': my_overdue_tasks,
+        'my_recent_tasks': my_recent_tasks,
     }
 
     return render(request, 'dashboard.html', context)

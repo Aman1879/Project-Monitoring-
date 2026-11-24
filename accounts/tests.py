@@ -331,8 +331,8 @@ class RegistrationTests(TestCase):
         response = self.client.get(reverse('register'))
         self.assertRedirects(response, reverse('dashboard'))
 
-    def test_successful_registration_creates_user_and_logs_in(self):
-        """Valid registration creates non-staff User, hashes password, logs user in, and redirects to dashboard."""
+    def test_successful_registration_creates_user_and_redirects_to_login(self):
+        """Valid registration creates non-staff User, hashes password, does NOT auto-login, and redirects to login page."""
         post_data = {
             'username': 'john_new',
             'first_name': 'John',
@@ -342,7 +342,7 @@ class RegistrationTests(TestCase):
             'password_confirm': 'SecurePassword123!',
         }
         response = self.client.post(reverse('register'), post_data)
-        self.assertRedirects(response, reverse('dashboard'))
+        self.assertRedirects(response, reverse('accounts:login'))
 
         # Verify user exists in database
         user = User.objects.get(username='john_new')
@@ -352,7 +352,15 @@ class RegistrationTests(TestCase):
         # Verify password hash
         self.assertNotEqual(user.password, 'SecurePassword123!')
         self.assertTrue(check_password('SecurePassword123!', user.password))
-        # Verify user is logged in
+        # Verify user is NOT automatically logged in
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+        # Verify user can subsequently log in with credentials
+        login_resp = self.client.post(reverse('accounts:login'), {
+            'username': 'john_new',
+            'password': 'SecurePassword123!',
+        })
+        self.assertRedirects(login_resp, reverse('dashboard'))
         self.assertEqual(int(self.client.session['_auth_user_id']), user.pk)
 
     def test_registration_duplicate_username_rejected(self):

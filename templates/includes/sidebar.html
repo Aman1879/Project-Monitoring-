@@ -1,8 +1,9 @@
+{% load static %}
 <aside id="sidebar">
     <!-- Brand / Logo Header -->
     <a href="{% url 'home' %}" class="sidebar-brand">
-        <i class="bi bi-diagram-3-fill me-2"></i>
-        <span>TrackPoint</span>
+        <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="border border-white border-opacity-25 shadow-sm">
+        <span style="font-family: 'Jost', sans-serif;">ORVEXA</span>
     </a>
 
     <!-- Sidebar Navigation Links -->
@@ -50,7 +51,7 @@
             <li class="sidebar-heading mt-2">Analytics & System</li>
 
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{% url 'dashboard' %}" class="nav-link">
                     <i class="bi bi-bar-chart"></i>
                     <span>Reports</span>
                 </a>
@@ -89,7 +90,7 @@
 
     <!-- Footer / Version Info -->
     <div class="p-3 text-muted small border-top border-secondary border-opacity-10">
-        <span class="d-block text-white-50">Project Monitor v1.0</span>
-        <span class="text-secondary">College Mini-Project</span>
+        <span class="d-block text-white fw-bold tracking-tight" style="font-family: 'Jost', sans-serif;">ORVEXA Platform</span>
+        <span class="text-secondary small">TrackPoint Engine &bull; Manage Smarter. Achieve More.</span>
     </div>
 </aside>

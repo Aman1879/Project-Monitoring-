@@ -65,7 +65,7 @@ def register_view(request):
     - If user is already authenticated, redirects them to the authenticated dashboard.
     - Validates matching passwords and unique username.
     - Hashes password securely and ensures non-staff/non-superuser flags.
-    - Automatically logs in the user upon successful registration.
+    - Does NOT auto-login; redirects to login page so user must log in with their credentials.
     """
     if request.user.is_authenticated:
         return redirect('dashboard')
@@ -74,12 +74,11 @@ def register_view(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
             messages.success(
                 request,
-                f'Welcome to TrackPoint, {user.first_name or user.username}! Your account has been created successfully.'
+                f'Account created successfully for {user.username}! Please sign in with your credentials to access your dashboard.'
             )
-            return redirect('dashboard')
+            return redirect('accounts:login')
         else:
             messages.error(request, 'Please correct the errors below to register.')
     else:

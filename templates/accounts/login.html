@@ -4,7 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Project Monitoring System</title>
+    <title>Login - ORVEXA</title>
+    <link rel="icon" type="image/webp" href="{% static 'img/logo.webp' %}">
+
+    <!-- Google Fonts: Jost, Lato -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -17,12 +23,13 @@
 
     <style>
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #11131B 0%, #0037B0 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1.5rem;
+            font-family: 'Lato', sans-serif;
         }
         .login-card {
             max-width: 440px;
@@ -34,25 +41,24 @@
             overflow: hidden;
         }
         .login-header {
-            background-color: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
+            background-color: #FAF8FF;
+            border-bottom: 1px solid #E2E1ED;
             padding: 2rem 2rem 1.5rem;
             text-align: center;
         }
         .login-body {
             padding: 2rem;
         }
-        .brand-icon {
-            width: 54px;
-            height: 54px;
-            background-color: #eff6ff;
-            color: #1e3a8a;
+        .brand-logo-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
             border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            margin-bottom: 1rem;
+            background: #ffffff;
+            padding: 4px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.75rem;
+            border: 1px solid #E2E1ED;
         }
     </style>
 </head>
@@ -61,11 +67,10 @@
     <div class="login-card">
         <!-- Header -->
         <div class="login-header">
-            <div class="brand-icon shadow-sm">
-                <i class="bi bi-kanban"></i>
-            </div>
-            <h1 class="h4 fw-bold text-dark mb-1">Project Monitoring System</h1>
-            <p class="text-muted small mb-0">Enter your credentials to access your account</p>
+            <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="brand-logo-img">
+            <h1 class="h4 fw-bold text-dark mb-1" style="font-family: 'Jost', sans-serif;">ORVEXA</h1>
+            <p class="text-primary small fw-semibold mb-1">Manage Smarter. Achieve More.</p>
+            <p class="text-muted small mb-0">Project Monitoring System &bull; Sign In</p>
         </div>
 
         <!-- Body -->
@@ -109,13 +114,16 @@
                                class="form-control border-start-0" 
                                placeholder="Enter your username" 
                                required 
-                               autofocus>
+                               autofocus 
+                               value="{{ request.POST.username|default:'' }}">
                     </div>
                 </div>
 
                 <!-- Password Field -->
                 <div class="mb-4">
-                    <label for="id_password" class="form-label fw-semibold small text-secondary">Password</label>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label for="id_password" class="form-label fw-semibold small text-secondary mb-0">Password</label>
+                    </div>
                     <div class="input-group">
                         <span class="input-group-text bg-light text-muted border-end-0">
                             <i class="bi bi-lock"></i>
@@ -130,15 +138,20 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="d-grid mb-3">
-                    <button type="submit" class="btn btn-primary py-2 fw-semibold shadow-sm">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
-                    </button>
-                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2.5 shadow-sm">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to ORVEXA
+                </button>
             </form>
 
-            <div class="text-center mt-3 pt-3 border-top">
-                <small class="text-muted">College Mini-Project &bull; INT253 Full Stack</small>
+            <div class="text-center mt-3">
+                <span class="text-muted small">Don't have an account?</span>
+                <a href="{% url 'register' %}" class="small text-primary fw-semibold text-decoration-none ms-1">Register here</a>
+            </div>
+
+            <div class="text-center mt-2">
+                <a href="{% url 'home' %}" class="text-muted small text-decoration-none">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Homepage
+                </a>
             </div>
         </div>
     </div>
@@ -147,4 +160,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
-

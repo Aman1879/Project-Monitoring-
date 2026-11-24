@@ -1,179 +1,867 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORVEXA — Web-Based Integrated Project-Monitoring Platform</title>
+  <link rel="icon" type="image/webp" href="{% static 'img/logo.webp' %}">
 
-{% block title %}TrackPoint - Project Monitoring Platform{% endblock %}
+  <!-- Google Fonts: Jost (Headlines), Lato (Body), Source Code Pro (Monospace) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=Lato:wght@400;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
 
-{% block content %}
-<div class="container-fluid px-0">
-    <!-- Hero Banner Card -->
-    <div class="card border-0 text-white mb-4 shadow-sm" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); border-radius: 1rem;">
-        <div class="card-body p-4 p-md-5">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <span class="badge bg-primary bg-opacity-25 text-white border border-primary border-opacity-50 px-3 py-2 rounded-pill small mb-3 d-inline-flex align-items-center">
-                        <i class="bi bi-shield-check me-2"></i> INT253 Full-Stack Platform
+  <!-- Tailwind CSS CDN with Custom Enterprise SaaS Theme Configuration -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+  /** @type {import('tailwindcss').Config} */
+  globalThis.tailwind = globalThis.tailwind || {};
+  globalThis.tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          'orvexa-primary': '#003DB8',
+          'orvexa-primary-hover': '#002D8F',
+          'orvexa-navy': '#10294D',
+          'orvexa-navy-dark': '#0B1C36',
+          'orvexa-bg': '#F8F9FC',
+          'orvexa-border': '#E2E6F0',
+          'orvexa-card': '#FFFFFF',
+          'orvexa-text': '#10294D',
+          'orvexa-muted': '#5A6A85',
+          'success': '#15803D',
+          'success-container': '#DCFCE7',
+          'on-success-container': '#14532D',
+          'warning': '#B45309',
+          'warning-container': '#FEF3C7',
+          'on-warning-container': '#78350F',
+          'error': '#BA1A1A',
+          'error-container': '#FFDAD6',
+          'on-error-container': '#93000A',
+        },
+        fontFamily: {
+          'display': ['"Jost"', 'sans-serif'],
+          'headline': ['"Jost"', 'sans-serif'],
+          'title': ['"Jost"', 'sans-serif'],
+          'body': ['"Lato"', 'sans-serif'],
+          'label': ['"Lato"', 'sans-serif'],
+          'mono': ['"Source Code Pro"', 'monospace'],
+        },
+      },
+    },
+  };
+  </script>
+
+  <style>
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .material-symbols-outlined, .material-symbols-rounded, .material-symbols-sharp {
+      display: inline-block;
+      width: 1em;
+      height: 1em;
+      line-height: 1 !important;
+      box-sizing: content-box;
+      overflow: hidden;
+      white-space: nowrap;
+      direction: ltr;
+      vertical-align: middle;
+    }
+    .hero-slide {
+      transition: opacity 0.75s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-orvexa-bg text-orvexa-text font-body antialiased selection:bg-orvexa-primary selection:text-white w-full">
+  <div class="min-h-screen flex flex-col w-full">
+
+    <!-- Top Site Navigation (Full Width with 12px/16px/24px Horizontal Gutters) -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-orvexa-border w-full">
+      <div class="w-full px-3 md:px-4 lg:px-6 h-16 flex items-center justify-between gap-3">
+        <!-- Logo & Brand Identity (Left) -->
+        <a href="{% url 'home' %}" class="flex items-center gap-2.5 shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orvexa-primary rounded group">
+          <img src="{% static 'img/logo.webp' %}" alt="ORVEXA Logo" class="w-9 h-9 rounded-full object-cover shrink-0 shadow-xs border border-orvexa-border/80 group-hover:scale-105 transition-transform">
+          <div class="flex flex-col">
+            <span class="font-headline text-xl font-bold text-orvexa-navy tracking-tight leading-none">ORVEXA</span>
+            <span class="hidden sm:inline-block font-label text-[10px] uppercase tracking-wider text-orvexa-primary font-bold mt-0.5">Manage Smarter. Achieve More.</span>
+          </div>
+        </a>
+
+        <!-- Center Navigation Links (Desktop) -->
+        <nav aria-label="Primary navigation" class="hidden md:flex items-center gap-6 lg:gap-8">
+          <a href="#features" class="font-label text-sm lg:text-base font-semibold text-orvexa-muted hover:text-orvexa-primary transition-colors">Features</a>
+          <a href="#workflow" class="font-label text-sm lg:text-base font-semibold text-orvexa-muted hover:text-orvexa-primary transition-colors">Workflow</a>
+          <a href="#roles" class="font-label text-sm lg:text-base font-semibold text-orvexa-muted hover:text-orvexa-primary transition-colors">Roles</a>
+          <a href="#architecture" class="font-label text-sm lg:text-base font-semibold text-orvexa-muted hover:text-orvexa-primary transition-colors">Architecture</a>
+        </nav>
+
+        <!-- Right Action Buttons -->
+        <div class="hidden md:flex items-center gap-2.5 shrink-0">
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="inline-flex items-center justify-center gap-2 px-4 lg:px-5 py-2.5 rounded-lg bg-orvexa-primary text-white hover:bg-orvexa-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orvexa-primary shadow-xs font-label text-sm font-bold transition-all">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">dashboard</span>
+              <span>Open Dashboard</span>
+            </a>
+            <form method="POST" action="{% url 'accounts:logout' %}" class="inline m-0">
+              {% csrf_token %}
+              <button type="submit" class="inline-flex items-center justify-center p-2.5 rounded-lg bg-white text-error border border-orvexa-border hover:bg-error-container hover:text-on-error-container font-label transition-colors" title="Sign Out">
+                <span class="material-symbols-outlined text-[18px]" aria-hidden="true">logout</span>
+              </button>
+            </form>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="inline-flex items-center justify-center px-4 lg:px-5 py-2.5 rounded-lg bg-white text-orvexa-navy border border-orvexa-border hover:bg-orvexa-bg font-label text-sm font-bold transition-colors">
+              <span>Sign In</span>
+            </a>
+            <a href="{% url 'register' %}" class="inline-flex items-center justify-center gap-1.5 px-4 lg:px-5 py-2.5 rounded-lg bg-orvexa-primary text-white border border-orvexa-primary hover:bg-orvexa-primary-hover shadow-xs font-label text-sm font-bold transition-all">
+              <span class="material-symbols-outlined text-[18px]" aria-hidden="true">person_add</span>
+              <span>Register</span>
+            </a>
+          {% endif %}
+        </div>
+
+        <!-- Mobile Hamburger Toggle Button -->
+        <button id="mobile-menu-toggle" type="button" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-nav-drawer" class="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg bg-white text-orvexa-navy border border-orvexa-border hover:bg-orvexa-bg transition-colors">
+          <span class="material-symbols-outlined text-[22px]" aria-hidden="true">menu</span>
+        </button>
+      </div>
+
+      <!-- Mobile Navigation Drawer -->
+      <div id="mobile-nav-drawer" class="hidden md:hidden border-t border-orvexa-border bg-white px-4 py-4 w-full">
+        <nav aria-label="Mobile navigation" class="flex flex-col gap-2 w-full">
+          <a href="#features" class="py-2.5 font-label text-base font-semibold text-orvexa-muted hover:text-orvexa-primary border-b border-orvexa-border/50">Features</a>
+          <a href="#workflow" class="py-2.5 font-label text-base font-semibold text-orvexa-muted hover:text-orvexa-primary border-b border-orvexa-border/50">Workflow</a>
+          <a href="#roles" class="py-2.5 font-label text-base font-semibold text-orvexa-muted hover:text-orvexa-primary border-b border-orvexa-border/50">Roles</a>
+          <a href="#architecture" class="py-2.5 font-label text-base font-semibold text-orvexa-muted hover:text-orvexa-primary border-b border-orvexa-border/50">Architecture</a>
+          <div class="pt-3 flex flex-col gap-2 w-full">
+            {% if request.user.is_authenticated %}
+              <a href="{% url 'dashboard' %}" class="w-full text-center py-2.5 rounded-lg bg-orvexa-primary text-white font-label text-sm font-bold">Open Dashboard</a>
+            {% else %}
+              <a href="{% url 'accounts:login' %}" class="w-full text-center py-2.5 rounded-lg bg-white text-orvexa-navy border border-orvexa-border font-label text-sm font-bold">Sign In</a>
+              <a href="{% url 'register' %}" class="w-full text-center py-2.5 rounded-lg bg-orvexa-primary text-white font-label text-sm font-bold">Register Free</a>
+            {% endif %}
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1 w-full flex flex-col">
+
+      <!-- Full-Width Hero Section with Sliding Carousel -->
+      <section class="w-full px-3 md:px-4 lg:px-6 pt-3 pb-6">
+        <div id="hero-slider" class="relative w-full h-[460px] sm:h-[500px] md:h-[560px] lg:h-[600px] rounded-2xl overflow-hidden shadow-md bg-orvexa-navy border border-orvexa-border">
+          
+          <!-- Slide 1: Enterprise Monitoring & Engineering Workspace -->
+          <div class="hero-slide absolute inset-0 w-full h-full opacity-100 z-10 transition-opacity duration-700 ease-in-out">
+            <img src="{% static 'img/hero/hero1.jpg' %}" alt="ORVEXA Enterprise Project Operations" class="w-full h-full object-cover object-center">
+            <div class="absolute inset-0 bg-gradient-to-r from-orvexa-navy-dark/95 via-orvexa-navy/80 to-orvexa-navy/30 flex items-center">
+              <div class="w-full max-w-3xl px-5 sm:px-8 md:px-12 lg:px-16 py-8 flex flex-col gap-3.5 text-white">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orvexa-primary/40 border border-orvexa-primary/70 text-white w-fit shadow-xs">
+                  <span class="w-2 h-2 rounded-full bg-blue-300 animate-pulse"></span>
+                  <span class="font-label text-xs uppercase tracking-wider font-bold">ORVEXA &bull; Manage Smarter. Achieve More.</span>
+                </div>
+                <h1 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+                  Monitor projects, teams, and deadlines in one workspace
+                </h1>
+                <p class="font-body text-sm sm:text-base md:text-lg text-white/85 leading-relaxed max-w-2xl">
+                  <strong>ORVEXA</strong> is a Web-Based Integrated Project-Monitoring Platform engineered for organizations to plan projects, assign tasks, track employee workload, and visualize milestone progress from a single dashboard.
+                </p>
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                  {% if request.user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-orvexa-primary hover:bg-orvexa-primary-hover text-white font-label text-sm font-bold shadow-md transition-colors">
+                      <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                      <span>Launch Dashboard</span>
+                    </a>
+                    <a href="{% url 'projects:project_list' %}" class="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-label text-sm font-semibold border border-white/20 transition-colors">
+                      <span class="material-symbols-outlined text-[18px]">folder</span>
+                      <span>View Projects</span>
+                    </a>
+                  {% else %}
+                    <a href="{% url 'register' %}" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-orvexa-primary hover:bg-orvexa-primary-hover text-white font-label text-sm font-bold shadow-md transition-colors">
+                      <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+                      <span>Get Started Free</span>
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-label text-sm font-semibold border border-white/20 transition-colors">
+                      <span class="material-symbols-outlined text-[18px]">login</span>
+                      <span>Sign In</span>
+                    </a>
+                  {% endif %}
+                  <a href="#dashboard-preview" class="inline-flex items-center gap-1 px-3 py-2.5 text-white/90 hover:text-white font-label text-sm font-semibold transition-colors">
+                    <span>Explore Platform</span>
+                    <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Team Collaboration & Task Allocation -->
+          <div class="hero-slide absolute inset-0 w-full h-full opacity-0 z-0 transition-opacity duration-700 ease-in-out">
+            <img src="{% static 'img/hero/hero2.jpg' %}" alt="Team Collaboration and Strategy" class="w-full h-full object-cover object-center">
+            <div class="absolute inset-0 bg-gradient-to-r from-orvexa-navy-dark/95 via-orvexa-navy/80 to-orvexa-navy/30 flex items-center">
+              <div class="w-full max-w-3xl px-5 sm:px-8 md:px-12 lg:px-16 py-8 flex flex-col gap-3.5 text-white">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-900/60 border border-blue-400/40 text-white w-fit shadow-xs">
+                  <span class="material-symbols-outlined text-[16px]">group</span>
+                  <span class="font-label text-xs uppercase tracking-wider font-bold">Team Allocation & Workload Velocity</span>
+                </div>
+                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+                  Seamless Task Delegation & Employee Productivity
+                </h2>
+                <p class="font-body text-sm sm:text-base md:text-lg text-white/85 leading-relaxed max-w-2xl">
+                  Break complex milestones into transparent deliverables with granular priorities, role-based access, and direct employee task status tracking.
+                </p>
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                  <a href="#features" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-orvexa-primary hover:bg-orvexa-primary-hover text-white font-label text-sm font-bold shadow-md transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">checklist</span>
+                    <span>Explore Task Features</span>
+                  </a>
+                  {% if not request.user.is_authenticated %}
+                    <a href="{% url 'register' %}" class="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-label text-sm font-semibold border border-white/20 transition-colors">
+                      <span>Create Account</span>
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Milestone Analytics & Proactive Alerts -->
+          <div class="hero-slide absolute inset-0 w-full h-full opacity-0 z-0 transition-opacity duration-700 ease-in-out">
+            <img src="{% static 'img/hero/hero3.jpg' %}" alt="Executive Analytics & Deadline Alarms" class="w-full h-full object-cover object-center">
+            <div class="absolute inset-0 bg-gradient-to-r from-orvexa-navy-dark/95 via-orvexa-navy/80 to-orvexa-navy/30 flex items-center">
+              <div class="w-full max-w-3xl px-5 sm:px-8 md:px-12 lg:px-16 py-8 flex flex-col gap-3.5 text-white">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-900/60 border border-amber-400/40 text-white w-fit shadow-xs">
+                  <span class="material-symbols-outlined text-[16px]">alarm</span>
+                  <span class="font-label text-xs uppercase tracking-wider font-bold">Proactive Deadline Compliance</span>
+                </div>
+                <h2 class="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+                  Zero Overdue Surprises with Live Progress Metrics
+                </h2>
+                <p class="font-body text-sm sm:text-base md:text-lg text-white/85 leading-relaxed max-w-2xl">
+                  Dynamic completion percentage calculated in real-time with automatic overdue alarms so project managers can intervene before target dates slip.
+                </p>
+                <div class="flex flex-wrap items-center gap-3 pt-2">
+                  <a href="#dashboard-preview" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-orvexa-primary hover:bg-orvexa-primary-hover text-white font-label text-sm font-bold shadow-md transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">analytics</span>
+                    <span>View Live Metrics</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slider Navigation Arrows -->
+          <button id="slider-prev" type="button" aria-label="Previous slide" class="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-10 sm:w-11 h-10 sm:h-11 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all focus:outline-none">
+            <span class="material-symbols-outlined text-[24px]">chevron_left</span>
+          </button>
+          <button id="slider-next" type="button" aria-label="Next slide" class="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-10 sm:w-11 h-10 sm:h-11 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm transition-all focus:outline-none">
+            <span class="material-symbols-outlined text-[24px]">chevron_right</span>
+          </button>
+
+          <!-- Slider Dot Indicators -->
+          <div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur-sm">
+            <button type="button" class="slider-dot w-6 h-2 rounded-full bg-white transition-all duration-300" data-slide-index="0" aria-label="Slide 1"></button>
+            <button type="button" class="slider-dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all duration-300" data-slide-index="1" aria-label="Slide 2"></button>
+            <button type="button" class="slider-dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all duration-300" data-slide-index="2" aria-label="Slide 3"></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Centralized Interactive Operations Workspace Preview (Full Width) -->
+      <section id="dashboard-preview" class="w-full px-3 md:px-4 lg:px-6 py-4">
+        <div class="w-full rounded-2xl bg-orvexa-card border border-orvexa-border shadow-xs overflow-hidden">
+          <!-- Preview Top Bar -->
+          <div class="px-4 sm:px-6 py-4 bg-orvexa-bg border-b border-orvexa-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="material-symbols-outlined text-[22px] text-orvexa-primary shrink-0">analytics</span>
+              <span class="font-title text-base sm:text-lg text-orvexa-navy font-bold">ORVEXA Operations Workspace</span>
+              <span class="hidden sm:inline-block font-mono text-xs text-orvexa-muted shrink-0 px-2.5 py-0.5 rounded bg-white border border-orvexa-border">Live Preview</span>
+            </div>
+
+            <!-- Preview View Switcher Tabs -->
+            <div role="tablist" aria-label="Dashboard preview views" class="inline-flex items-center p-1 rounded-lg bg-white border border-orvexa-border self-start sm:self-auto shadow-xs">
+              <button type="button" role="tab" aria-selected="true" aria-controls="panel-overview" data-preview-tab="overview" class="px-3.5 py-1.5 rounded-md font-label text-xs font-bold bg-orvexa-primary text-white shadow-xs transition-all">
+                <span>Overview</span>
+              </button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="panel-tasks" data-preview-tab="tasks" class="px-3.5 py-1.5 rounded-md font-label text-xs font-bold text-orvexa-muted hover:text-orvexa-navy transition-all">
+                <span>Tasks</span>
+              </button>
+              <button type="button" role="tab" aria-selected="false" aria-controls="panel-deadlines" data-preview-tab="deadlines" class="px-3.5 py-1.5 rounded-md font-label text-xs font-bold text-orvexa-muted hover:text-orvexa-navy transition-all">
+                <span>Deadlines</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- KPI Metric Strip (4 columns on desktop, 2 on tablet, 1 on small mobile) -->
+          <div class="p-4 sm:p-6 border-b border-orvexa-border grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 items-stretch">
+            <div class="h-full p-4 rounded-xl bg-orvexa-bg border border-orvexa-border flex flex-col gap-1">
+              <span class="font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Active Projects</span>
+              <span class="font-headline text-2xl sm:text-3xl text-orvexa-navy tabular-nums font-bold">
+                {{ active_projects|default:14 }}
+              </span>
+              <span class="font-body text-xs text-orvexa-muted tabular-nums">
+                {{ total_projects|default:18 }} total initiatives
+              </span>
+            </div>
+            <div class="h-full p-4 rounded-xl bg-orvexa-bg border border-orvexa-border flex flex-col gap-1">
+              <span class="font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Tasks Completed</span>
+              <span class="font-headline text-2xl sm:text-3xl text-success tabular-nums font-bold">
+                78%
+              </span>
+              <span class="font-body text-xs text-orvexa-muted tabular-nums">
+                {{ total_tasks|default:164 }} tasks logged
+              </span>
+            </div>
+            <div class="h-full p-4 rounded-xl bg-orvexa-bg border border-orvexa-border flex flex-col gap-1">
+              <span class="font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Due This Week</span>
+              <span class="font-headline text-2xl sm:text-3xl text-warning tabular-nums font-bold">5</span>
+              <span class="font-body text-xs text-orvexa-muted tabular-nums">1 flagged at risk</span>
+            </div>
+            <div class="h-full p-4 rounded-xl bg-orvexa-bg border border-orvexa-border flex flex-col gap-1">
+              <span class="font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Assigned Staff</span>
+              <span class="font-headline text-2xl sm:text-3xl text-orvexa-navy tabular-nums font-bold">18</span>
+              <span class="font-body text-xs text-orvexa-muted tabular-nums">86% team capacity</span>
+            </div>
+          </div>
+
+          <!-- Tab Panel 1: Overview Table -->
+          <div id="panel-overview" role="tabpanel" class="w-full overflow-x-auto">
+            <table class="w-full min-w-[700px] text-left border-collapse">
+              <thead>
+                <tr class="border-b border-orvexa-border bg-orvexa-bg">
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Project</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Lead</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Progress</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Deadline</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-orvexa-border">
+                <tr class="hover:bg-orvexa-bg/60 transition-colors">
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2.5">
+                      <span class="font-mono text-xs text-orvexa-muted shrink-0 font-semibold">ORV-104</span>
+                      <span class="font-title text-sm text-orvexa-navy font-semibold">ERP Core Cloud Migration</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-full bg-blue-100 text-orvexa-primary font-label text-xs flex items-center justify-center shrink-0 font-bold">AM</span>
+                      <span class="font-body text-sm text-orvexa-navy">Amina Mansour</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-3 min-w-[130px]">
+                      <div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div class="h-full bg-orvexa-primary rounded-full" style="width: 82%;"></div>
+                      </div>
+                      <span class="font-mono text-xs text-orvexa-muted tabular-nums font-semibold">82%</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-xs text-orvexa-muted tabular-nums">Dec 04, 2026</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success-container text-on-success-container whitespace-nowrap text-xs font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-success shrink-0" aria-hidden="true"></span>
+                      <span>On Track</span>
                     </span>
-                    <h1 class="display-6 fw-bold mb-3">Web-Based Integrated Project-Monitoring Platform</h1>
-                    <p class="lead text-white-50 mb-4" style="max-width: 650px;">
-                        TrackPoint provides administrators and engineering teams with a centralized platform to plan projects, assign tasks, track real-time completion progress, and meet deadlines.
-                    </p>
+                  </td>
+                </tr>
 
-                    <div class="d-flex flex-wrap gap-2">
-                        {% if request.user.is_authenticated %}
-                            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg shadow-sm">
-                                <i class="bi bi-speedometer2 me-2"></i> Open Dashboard
-                            </a>
-                            <a href="{% url 'projects:project_list' %}" class="btn btn-outline-light btn-lg">
-                                <i class="bi bi-folder me-2"></i> Manage Projects
-                            </a>
-                        {% else %}
-                            <a href="{% url 'register' %}" class="btn btn-primary btn-lg shadow-sm">
-                                <i class="bi bi-person-plus-fill me-2"></i> Get Started (Register)
-                            </a>
-                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">
-                                <i class="bi bi-box-arrow-in-right me-2"></i> Sign In
-                            </a>
-                        {% endif %}
+                <tr class="hover:bg-orvexa-bg/60 transition-colors">
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2.5">
+                      <span class="font-mono text-xs text-orvexa-muted shrink-0 font-semibold">ORV-109</span>
+                      <span class="font-title text-sm text-orvexa-navy font-semibold">Student Records Portal v2</span>
                     </div>
-                </div>
-
-                <div class="col-lg-4 d-none d-lg-block text-center">
-                    <div class="p-4 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-10 backdrop-blur">
-                        <i class="bi bi-kanban-fill text-primary display-1 opacity-75"></i>
-                        <h5 class="fw-bold text-white mt-3 mb-1">TrackPoint Architecture</h5>
-                        <p class="small text-white-50 mb-0">Django MVT &bull; Bootstrap 5 &bull; SQLite</p>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-full bg-blue-100 text-orvexa-primary font-label text-xs flex items-center justify-center shrink-0 font-bold">DK</span>
+                      <span class="font-body text-sm text-orvexa-navy">Daniel Kim</span>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Platform Metrics Overview (Public & Safe) -->
-    <div class="row g-3 mb-5">
-        <div class="col-sm-6 col-xl-3">
-            <div class="card p-3 h-100 text-center">
-                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-primary bg-opacity-10 text-primary mx-auto mb-2" style="width: 56px; height: 56px;">
-                    <i class="bi bi-folder-check fs-4"></i>
-                </div>
-                <h3 class="fw-bold mb-1">{{ total_projects }}</h3>
-                <span class="text-muted small text-uppercase fw-semibold">Projects Monitored</span>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-xl-3">
-            <div class="card p-3 h-100 text-center">
-                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-success bg-opacity-10 text-success mx-auto mb-2" style="width: 56px; height: 56px;">
-                    <i class="bi bi-check2-all fs-4"></i>
-                </div>
-                <h3 class="fw-bold mb-1">{{ completed_projects }}</h3>
-                <span class="text-muted small text-uppercase fw-semibold">Completed Initiatives</span>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-xl-3">
-            <div class="card p-3 h-100 text-center">
-                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-info bg-opacity-10 text-info mx-auto mb-2" style="width: 56px; height: 56px;">
-                    <i class="bi bi-hourglass-split fs-4"></i>
-                </div>
-                <h3 class="fw-bold mb-1">{{ active_projects }}</h3>
-                <span class="text-muted small text-uppercase fw-semibold">Active In-Progress</span>
-            </div>
-        </div>
-
-        <div class="col-sm-6 col-xl-3">
-            <div class="card p-3 h-100 text-center">
-                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle bg-warning bg-opacity-10 text-warning mx-auto mb-2" style="width: 56px; height: 56px;">
-                    <i class="bi bi-list-task fs-4"></i>
-                </div>
-                <h3 class="fw-bold mb-1">{{ total_tasks }}</h3>
-                <span class="text-muted small text-uppercase fw-semibold">Tasks Tracked</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Core Capabilities Showcase -->
-    <div class="mb-5">
-        <div class="text-center mb-4">
-            <h2 class="h4 fw-bold text-dark mb-1">Integrated Capabilities</h2>
-            <p class="text-muted small">Everything required to organize projects and monitor team execution.</p>
-        </div>
-
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 p-4">
-                    <div class="text-primary mb-3">
-                        <i class="bi bi-bar-chart-steps fs-2"></i>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-3 min-w-[130px]">
+                      <div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div class="h-full bg-orvexa-primary rounded-full" style="width: 64%;"></div>
+                      </div>
+                      <span class="font-mono text-xs text-orvexa-muted tabular-nums font-semibold">64%</span>
                     </div>
-                    <h5 class="fw-bold fs-6 text-dark mb-2">Automated Progress</h5>
-                    <p class="text-muted small mb-0">
-                        Dynamic completion percentage calculated in real-time based on finished tasks per project.
-                    </p>
-                </div>
-            </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-xs text-orvexa-muted tabular-nums">Nov 29, 2026</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-warning-container text-on-warning-container whitespace-nowrap text-xs font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-warning shrink-0" aria-hidden="true"></span>
+                      <span>Due Soon</span>
+                    </span>
+                  </td>
+                </tr>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 p-4">
-                    <div class="text-primary mb-3">
-                        <i class="bi bi-people-fill fs-2"></i>
+                <tr class="hover:bg-orvexa-bg/60 transition-colors">
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2.5">
+                      <span class="font-mono text-xs text-orvexa-muted shrink-0 font-semibold">ORV-112</span>
+                      <span class="font-title text-sm text-orvexa-navy font-semibold">Q4 Security Compliance Audit</span>
                     </div>
-                    <h5 class="fw-bold fs-6 text-dark mb-2">Employee Directory</h5>
-                    <p class="text-muted small mb-0">
-                        Linked user accounts and department profiles with granular staff administrator authorization.
-                    </p>
-                </div>
-            </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-full bg-blue-100 text-orvexa-primary font-label text-xs flex items-center justify-center shrink-0 font-bold">SR</span>
+                      <span class="font-body text-sm text-orvexa-navy">Sofia Reyes</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-3 min-w-[130px]">
+                      <div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div class="h-full bg-orvexa-primary rounded-full" style="width: 95%;"></div>
+                      </div>
+                      <span class="font-mono text-xs text-orvexa-muted tabular-nums font-semibold">95%</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-xs text-orvexa-muted tabular-nums">Dec 12, 2026</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-success-container text-on-success-container whitespace-nowrap text-xs font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-success shrink-0" aria-hidden="true"></span>
+                      <span>On Track</span>
+                    </span>
+                  </td>
+                </tr>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 p-4">
-                    <div class="text-primary mb-3">
-                        <i class="bi bi-calendar-range-fill fs-2"></i>
+                <tr class="hover:bg-orvexa-bg/60 transition-colors">
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2.5">
+                      <span class="font-mono text-xs text-orvexa-muted shrink-0 font-semibold">ORV-118</span>
+                      <span class="font-title text-sm text-orvexa-navy font-semibold">Attendance API Integration</span>
                     </div>
-                    <h5 class="fw-bold fs-6 text-dark mb-2">Deadline & Alarms</h5>
-                    <p class="text-muted small mb-0">
-                        Automatic detection of overdue milestones to ensure projects stay on schedule.
-                    </p>
-                </div>
-            </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-2">
+                      <span class="w-7 h-7 rounded-full bg-blue-100 text-orvexa-primary font-label text-xs flex items-center justify-center shrink-0 font-bold">TO</span>
+                      <span class="font-body text-sm text-orvexa-navy">Tunde Okafor</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <div class="flex items-center gap-3 min-w-[130px]">
+                      <div class="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div class="h-full bg-orvexa-primary rounded-full" style="width: 41%;"></div>
+                      </div>
+                      <span class="font-mono text-xs text-orvexa-muted tabular-nums font-semibold">41%</span>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-xs text-orvexa-muted tabular-nums">Nov 27, 2026</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-error-container text-on-error-container whitespace-nowrap text-xs font-bold">
+                      <span class="w-1.5 h-1.5 rounded-full bg-error shrink-0" aria-hidden="true"></span>
+                      <span>At Risk</span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 p-4">
-                    <div class="text-primary mb-3">
-                        <i class="bi bi-shield-lock-fill fs-2"></i>
-                    </div>
-                    <h5 class="fw-bold fs-6 text-dark mb-2">Secure Architecture</h5>
-                    <p class="text-muted small mb-0">
-                        CSRF tokens on all POST requests, PBKDF2 password encryption, and atomic database transactions.
-                    </p>
+          <!-- Tab Panel 2: Tasks (Hidden by default) -->
+          <div id="panel-tasks" role="tabpanel" class="hidden w-full overflow-x-auto">
+            <table class="w-full min-w-[650px] text-left border-collapse">
+              <thead>
+                <tr class="border-b border-orvexa-border bg-orvexa-bg">
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Task</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Assignee</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Project</th>
+                  <th class="py-3 px-4 sm:px-6 font-label text-xs font-bold text-orvexa-muted uppercase tracking-wider">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-orvexa-border">
+                <tr>
+                  <td class="py-3.5 px-4 sm:px-6 font-title text-sm text-orvexa-navy font-semibold">Configure role-based Django permissions</td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-sm text-orvexa-muted">Amina Mansour</td>
+                  <td class="py-3.5 px-4 sm:px-6 font-mono text-xs text-orvexa-muted">ORV-104</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success-container text-on-success-container font-label text-xs whitespace-nowrap font-bold">Completed</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 px-4 sm:px-6 font-title text-sm text-orvexa-navy font-semibold">Finalize Bootstrap 5 responsive form templates</td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-sm text-orvexa-muted">Daniel Kim</td>
+                  <td class="py-3.5 px-4 sm:px-6 font-mono text-xs text-orvexa-muted">ORV-109</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-warning-container text-on-warning-container font-label text-xs whitespace-nowrap font-bold">In Review</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="py-3.5 px-4 sm:px-6 font-title text-sm text-orvexa-navy font-semibold">Resolve attendance webhook timeout</td>
+                  <td class="py-3.5 px-4 sm:px-6 font-body text-sm text-orvexa-muted">Tunde Okafor</td>
+                  <td class="py-3.5 px-4 sm:px-6 font-mono text-xs text-orvexa-muted">ORV-118</td>
+                  <td class="py-3.5 px-4 sm:px-6">
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label text-xs whitespace-nowrap font-bold">Blocked</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Panel 3: Deadlines (Hidden by default) -->
+          <div id="panel-deadlines" role="tabpanel" class="hidden p-4 sm:p-6 w-full">
+            <div class="flex flex-col gap-3 w-full">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-xl bg-orvexa-bg border border-orvexa-border">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-title text-sm text-orvexa-navy font-bold">Attendance API Integration — Milestone 2</span>
+                  <span class="font-body text-xs text-orvexa-muted">Lead: Tunde Okafor &bull; Priority: Urgent</span>
                 </div>
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-xs text-orvexa-muted tabular-nums font-semibold">Nov 27, 2026 (3 days left)</span>
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label text-xs whitespace-nowrap font-bold">At Risk</span>
+                </div>
+              </div>
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-xl bg-orvexa-bg border border-orvexa-border">
+                <div class="flex flex-col gap-0.5">
+                  <span class="font-title text-sm text-orvexa-navy font-bold">Student Records Portal v2 — User Acceptance Testing</span>
+                  <span class="font-body text-xs text-orvexa-muted">Lead: Daniel Kim &bull; Priority: High</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="font-mono text-xs text-orvexa-muted tabular-nums font-semibold">Nov 29, 2026 (5 days left)</span>
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-warning-container text-on-warning-container font-label text-xs whitespace-nowrap font-bold">Due Soon</span>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <!-- Workflow Section -->
-    <div class="card bg-light border-0 p-4 mb-4">
-        <div class="row g-4 align-items-center">
-            <div class="col-md-4 text-center">
-                <div class="p-3 bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 64px; height: 64px;">
-                    <span class="fs-4 fw-bold text-primary">1</span>
+      <!-- Core Capabilities Section (Full Width, Consistent 12px/16px/24px Gutters) -->
+      <section id="features" class="w-full py-10 border-t border-orvexa-border bg-white">
+        <div class="w-full px-3 md:px-4 lg:px-6">
+          <div class="max-w-3xl mb-7 flex flex-col gap-1.5">
+            <h2 class="font-headline text-2xl sm:text-3xl text-orvexa-navy font-bold">
+              Core capabilities for structured project delivery
+            </h2>
+            <p class="font-body text-sm sm:text-base text-orvexa-muted">
+              Built around four essential workflows so project coordinators and team members stay aligned without spreadsheet overhead.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 items-stretch w-full">
+            <!-- Feature 1 -->
+            <article class="h-full flex flex-col gap-3 p-5 rounded-xl bg-orvexa-bg border border-orvexa-border shadow-2xs hover:shadow-xs transition-shadow">
+              <header class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 text-orvexa-primary flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[22px]" aria-hidden="true">monitoring</span>
                 </div>
-                <h6 class="fw-bold mt-2 mb-1">Create Projects</h6>
-                <p class="small text-muted mb-0">Define timelines, target deadlines, and status goals.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="p-3 bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 64px; height: 64px;">
-                    <span class="fs-4 fw-bold text-primary">2</span>
+                <div class="flex flex-col">
+                  <h3 class="font-title text-base text-orvexa-navy font-bold">Project Monitoring</h3>
+                  <p class="font-body text-xs text-orvexa-muted">Centralized portfolio visibility</p>
                 </div>
-                <h6 class="fw-bold mt-2 mb-1">Delegate Tasks</h6>
-                <p class="small text-muted mb-0">Assign tasks with priorities and deadlines to employees.</p>
-            </div>
-            <div class="col-md-4 text-center">
-                <div class="p-3 bg-white rounded-circle d-inline-flex align-items-center justify-content-center shadow-sm mb-2" style="width: 64px; height: 64px;">
-                    <span class="fs-4 fw-bold text-primary">3</span>
+              </header>
+              <p class="font-body text-xs sm:text-sm text-orvexa-muted leading-relaxed">
+                Track completion percentages, active phases, and departmental health across every initiative from a single summary view.
+              </p>
+            </article>
+
+            <!-- Feature 2 -->
+            <article class="h-full flex flex-col gap-3 p-5 rounded-xl bg-orvexa-bg border border-orvexa-border shadow-2xs hover:shadow-xs transition-shadow">
+              <header class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 text-orvexa-primary flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[22px]" aria-hidden="true">group</span>
                 </div>
-                <h6 class="fw-bold mt-2 mb-1">Monitor Operations</h6>
-                <p class="small text-muted mb-0">Review progress bars and overdue alarms on the dashboard.</p>
-            </div>
+                <div class="flex flex-col">
+                  <h3 class="font-title text-base text-orvexa-navy font-bold">Employee Management</h3>
+                  <p class="font-body text-xs text-orvexa-muted">Departments, roles, & workload</p>
+                </div>
+              </header>
+              <p class="font-body text-xs sm:text-sm text-orvexa-muted leading-relaxed">
+                Maintain an organized directory of staff members, assign department leads, and balance open task counts across your team.
+              </p>
+            </article>
+
+            <!-- Feature 3 -->
+            <article class="h-full flex flex-col gap-3 p-5 rounded-xl bg-orvexa-bg border border-orvexa-border shadow-2xs hover:shadow-xs transition-shadow">
+              <header class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 text-orvexa-primary flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[22px]" aria-hidden="true">assignment_turned_in</span>
+                </div>
+                <div class="flex flex-col">
+                  <h3 class="font-title text-base text-orvexa-navy font-bold">Task Assignment</h3>
+                  <p class="font-body text-xs text-orvexa-muted">Clear ownership & status</p>
+                </div>
+              </header>
+              <p class="font-body text-xs sm:text-sm text-orvexa-muted leading-relaxed">
+                Break project milestones into discrete tasks with priority levels, assigned owners, and straightforward status transitions.
+              </p>
+            </article>
+
+            <!-- Feature 4 -->
+            <article class="h-full flex flex-col gap-3 p-5 rounded-xl bg-orvexa-bg border border-orvexa-border shadow-2xs hover:shadow-xs transition-shadow">
+              <header class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-100 text-orvexa-primary flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-[22px]" aria-hidden="true">event_upcoming</span>
+                </div>
+                <div class="flex flex-col">
+                  <h3 class="font-title text-base text-orvexa-navy font-bold">Deadline Tracking</h3>
+                  <p class="font-body text-xs text-orvexa-muted">Proactive schedule alerts</p>
+                </div>
+              </header>
+              <p class="font-body text-xs sm:text-sm text-orvexa-muted leading-relaxed">
+                Highlight upcoming due dates and overdue deliverables automatically so leads can intervene before milestones slip.
+              </p>
+            </article>
+          </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+      </section>
 
+      <!-- Workflow & Role-Based Access Section (Full Width) -->
+      <section id="workflow" class="w-full py-10 border-t border-orvexa-border bg-orvexa-bg">
+        <div class="w-full px-3 md:px-4 lg:px-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
+            <div class="lg:col-span-5 flex flex-col gap-3">
+              <h2 class="font-headline text-2xl sm:text-3xl text-orvexa-navy font-bold">
+                Designed around real team roles
+              </h2>
+              <p class="font-body text-sm sm:text-base text-orvexa-muted">
+                Every user sees the controls relevant to their responsibilities—from organization-wide oversight to focused daily task updates.
+              </p>
+              <div class="flex flex-col gap-2 pt-1">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[20px] text-success" aria-hidden="true">check_circle</span>
+                  <span class="font-body text-sm text-orvexa-navy">Create projects and set target deadlines</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[20px] text-success" aria-hidden="true">check_circle</span>
+                  <span class="font-body text-sm text-orvexa-navy">Assign employees and balance task load</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[20px] text-success" aria-hidden="true">check_circle</span>
+                  <span class="font-body text-sm text-orvexa-navy">Review progress bars and milestone health</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="roles" class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 items-stretch w-full">
+              <article class="h-full flex flex-col gap-2 p-5 rounded-xl bg-white border border-orvexa-border shadow-2xs">
+                <span class="material-symbols-outlined text-[26px] text-orvexa-primary" aria-hidden="true">admin_panel_settings</span>
+                <h3 class="font-title text-base text-orvexa-navy font-bold">Administrator</h3>
+                <p class="font-body text-xs text-orvexa-muted">
+                  Manages departments, employee accounts, and organization-wide project portfolios.
+                </p>
+              </article>
+
+              <article class="h-full flex flex-col gap-2 p-5 rounded-xl bg-white border border-orvexa-border shadow-2xs">
+                <span class="material-symbols-outlined text-[26px] text-orvexa-primary" aria-hidden="true">manage_accounts</span>
+                <h3 class="font-title text-base text-orvexa-navy font-bold">Project Lead</h3>
+                <p class="font-body text-xs text-orvexa-muted">
+                  Defines milestones, assigns tasks to staff, and monitors deadline compliance.
+                </p>
+              </article>
+
+              <article class="h-full flex flex-col gap-2 p-5 rounded-xl bg-white border border-orvexa-border shadow-2xs">
+                <span class="material-symbols-outlined text-[26px] text-orvexa-primary" aria-hidden="true">person</span>
+                <h3 class="font-title text-base text-orvexa-navy font-bold">Team Member</h3>
+                <p class="font-body text-xs text-orvexa-muted">
+                  Views assigned tasks, logs progress updates, and submits completed deliverables.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Architecture & Final CTA Card (Full Width) -->
+      <section id="architecture" class="w-full py-10 border-t border-orvexa-border bg-white">
+        <div class="w-full px-3 md:px-4 lg:px-6">
+          <div id="get-started" class="w-full p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-orvexa-navy-dark via-orvexa-navy to-orvexa-primary text-white border border-orvexa-border flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-sm">
+            <div class="flex flex-col gap-2 max-w-2xl">
+              <div class="flex items-center gap-2">
+                <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="w-6 h-6 rounded-full object-cover">
+                <span class="font-label text-xs text-blue-200 font-bold uppercase tracking-wider">ORVEXA Architecture</span>
+              </div>
+              <h2 class="font-headline text-xl sm:text-2xl lg:text-3xl font-bold leading-tight">
+                Ready to bring clarity to your team’s projects?
+              </h2>
+              <p class="font-body text-sm sm:text-base text-white/80">
+                Structured for clean Django template rendering and responsive Bootstrap 5 grids — start monitoring projects and deadlines today with ORVEXA.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+              {% if request.user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-white text-orvexa-primary font-label text-sm font-bold shadow-md hover:bg-white/90 transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">dashboard</span>
+                  <span>Open Dashboard</span>
+                </a>
+              {% else %}
+                <a href="{% url 'accounts:login' %}" class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white border border-white/20 font-label text-sm font-bold transition-colors">
+                  <span>Sign In</span>
+                </a>
+                <a href="{% url 'register' %}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-orvexa-primary hover:bg-orvexa-primary-hover text-white border border-white/30 font-label text-sm font-bold shadow-md transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">rocket_launch</span>
+                  <span>Register Free</span>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer (Full Width with Identical Alignment) -->
+    <footer class="bg-white border-t border-orvexa-border py-8 w-full">
+      <div class="w-full px-3 md:px-4 lg:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-2.5">
+            <img src="{% static 'img/logo.webp' %}" alt="ORVEXA Logo" class="w-7 h-7 rounded-full object-cover shrink-0 border border-orvexa-border">
+            <span class="font-headline text-lg text-orvexa-navy font-bold">ORVEXA</span>
+            <span class="text-xs text-orvexa-primary font-semibold">&bull; Manage Smarter. Achieve More.</span>
+          </div>
+          <p class="font-body text-xs text-orvexa-muted">
+            Web-Based Integrated Project-Monitoring Platform
+          </p>
+        </div>
+
+        <nav aria-label="Footer navigation" class="flex flex-wrap items-center gap-5 sm:gap-7">
+          <a href="#features" class="font-body text-xs text-orvexa-muted hover:text-orvexa-primary transition-colors">Features</a>
+          <a href="#workflow" class="font-body text-xs text-orvexa-muted hover:text-orvexa-primary transition-colors">Workflow</a>
+          <a href="#roles" class="font-body text-xs text-orvexa-muted hover:text-orvexa-primary transition-colors">Roles</a>
+          <a href="#dashboard-preview" class="font-body text-xs text-orvexa-muted hover:text-orvexa-primary transition-colors">Dashboard</a>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'dashboard' %}" class="font-body text-xs text-orvexa-primary font-bold">My Workspace</a>
+          {% else %}
+            <a href="{% url 'accounts:login' %}" class="font-body text-xs text-orvexa-primary font-bold">Sign In</a>
+          {% endif %}
+        </nav>
+
+        <p class="font-body text-xs text-orvexa-muted">
+          &copy; 2026 ORVEXA Platform. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Interactive JavaScript for Hero Slider, Tabs & Mobile Drawer -->
+  <script>
+    (function () {
+      // Mobile Drawer Toggle
+      var menuBtn = document.getElementById('mobile-menu-toggle');
+      var drawer = document.getElementById('mobile-nav-drawer');
+      if (menuBtn && drawer) {
+        menuBtn.addEventListener('click', function () {
+          var isOpen = !drawer.classList.contains('hidden');
+          drawer.classList.toggle('hidden', isOpen);
+          menuBtn.setAttribute('aria-expanded', String(!isOpen));
+        });
+      }
+
+      // Hero Slider Carousel
+      var slides = document.querySelectorAll('.hero-slide');
+      var dots = document.querySelectorAll('.slider-dot');
+      var prevBtn = document.getElementById('slider-prev');
+      var nextBtn = document.getElementById('slider-next');
+      var currentSlide = 0;
+      var slideInterval = null;
+
+      function showSlide(index) {
+        if (index < 0) index = slides.length - 1;
+        if (index >= slides.length) index = 0;
+        currentSlide = index;
+
+        slides.forEach(function (slide, i) {
+          if (i === currentSlide) {
+            slide.classList.remove('opacity-0', 'z-0');
+            slide.classList.add('opacity-100', 'z-10');
+          } else {
+            slide.classList.remove('opacity-100', 'z-10');
+            slide.classList.add('opacity-0', 'z-0');
+          }
+        });
+
+        dots.forEach(function (dot, i) {
+          if (i === currentSlide) {
+            dot.classList.remove('w-2', 'bg-white/50');
+            dot.classList.add('w-6', 'bg-white');
+          } else {
+            dot.classList.remove('w-6', 'bg-white');
+            dot.classList.add('w-2', 'bg-white/50');
+          }
+        });
+      }
+
+      function nextSlide() {
+        showSlide(currentSlide + 1);
+      }
+
+      function prevSlide() {
+        showSlide(currentSlide - 1);
+      }
+
+      if (prevBtn) prevBtn.addEventListener('click', function () {
+        prevSlide();
+        resetTimer();
+      });
+
+      if (nextBtn) nextBtn.addEventListener('click', function () {
+        nextSlide();
+        resetTimer();
+      });
+
+      dots.forEach(function (dot) {
+        dot.addEventListener('click', function () {
+          var idx = parseInt(dot.getAttribute('data-slide-index'), 10);
+          showSlide(idx);
+          resetTimer();
+        });
+      });
+
+      function startTimer() {
+        slideInterval = setInterval(nextSlide, 5000);
+      }
+
+      function resetTimer() {
+        clearInterval(slideInterval);
+        startTimer();
+      }
+
+      startTimer();
+
+      // Pause on hover
+      var sliderEl = document.getElementById('hero-slider');
+      if (sliderEl) {
+        sliderEl.addEventListener('mouseenter', function () { clearInterval(slideInterval); });
+        sliderEl.addEventListener('mouseleave', function () { startTimer(); });
+      }
+
+      // Preview View Tabs
+      var tabButtons = document.querySelectorAll('[data-preview-tab]');
+      var panels = {
+        overview: document.getElementById('panel-overview'),
+        tasks: document.getElementById('panel-tasks'),
+        deadlines: document.getElementById('panel-deadlines')
+      };
+
+      tabButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var target = btn.getAttribute('data-preview-tab');
+          tabButtons.forEach(function (other) {
+            var active = other.getAttribute('data-preview-tab') === target;
+            other.setAttribute('aria-selected', String(active));
+            other.classList.toggle('bg-orvexa-primary', active);
+            other.classList.toggle('text-white', active);
+            other.classList.toggle('text-orvexa-muted', !active);
+          });
+          Object.keys(panels).forEach(function (key) {
+            if (panels[key]) {
+              panels[key].classList.toggle('hidden', key !== target);
+            }
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

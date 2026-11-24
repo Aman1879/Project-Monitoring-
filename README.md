@@ -1,8 +1,10 @@
-# Web-Based Integrated Project-Monitoring Platform
+# ORVEXA — Web-Based Integrated Project-Monitoring Platform
+
+> **Manage Smarter. Achieve More.** &bull; *A Premium SaaS Project & Task Management Platform*
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-blue?style=for-the-badge&logo=render)](https://project-monitoring-7hqn.onrender.com/)
 
-A full-featured web-based project monitoring and task management application built using **Django**, **Python**, **Bootstrap 5**, and **SQLite**.
+**ORVEXA** is a full-featured web-based project monitoring and task management application built using **Django**, **Python**, **Bootstrap 5**, and **SQLite**.
 
 Designed for teams, administrators, and project managers to plan projects, assign tasks, track employee workloads, monitor deadlines, and visualize progress through an interactive real-time dashboard.
 
@@ -11,7 +13,7 @@ Designed for teams, administrators, and project managers to plan projects, assig
 ---
 
 ## 🚀 Key Features
-
+ 
 ### 1. Dashboard & Real-Time Analytics
 - **Live Statistics**: Total projects, projects in progress, completed projects, active employees, total tasks, pending tasks, in-progress tasks, completed tasks, and overdue tasks.
 - **Overdue Task Tracking**: Automatically calculates tasks past their due date that have not been completed.
