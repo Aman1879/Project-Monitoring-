@@ -6,12 +6,19 @@
             <i class="bi bi-list fs-5"></i>
         </button>
 
-        <!-- Project Brand Title & Logo -->
-        <a href="{% url 'home' %}" class="navbar-brand mb-0 h1 fs-5 d-flex align-items-center text-decoration-none" title="ORVEXA - Project Monitoring System">
-            <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="rounded-circle me-2 border border-light-outline-variant shadow-sm" style="width: 36px; height: 36px; object-fit: contain; background: #fff; padding: 1px;">
+        <!-- Project Brand Title & Logo (Visible on mobile/tablet when sidebar is collapsed) -->
+        <a href="{% url 'home' %}" class="navbar-brand mb-0 h1 fs-5 d-flex d-lg-none align-items-center text-decoration-none" title="ORVEXA - Project Monitoring System">
+            <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="rounded-circle me-2 border border-light-outline-variant shadow-sm" width="32" height="32" style="width: 32px; height: 32px; max-width: 32px; max-height: 32px; object-fit: contain; background: #fff; padding: 1px;">
             <span class="fw-bold tracking-tight text-dark" style="font-family: 'Jost', sans-serif;">ORVEXA</span>
-            <span class="badge bg-light text-primary border border-primary border-opacity-25 ms-2 d-none d-md-inline-block small rounded-pill">Project Monitoring System</span>
+            <span class="badge bg-light text-primary border border-primary border-opacity-25 ms-2 small rounded-pill">Project Monitoring System</span>
         </a>
+
+        <!-- Desktop System Badge (Avoids duplicate logo while keeping system identity) -->
+        <div class="d-none d-lg-flex align-items-center me-3">
+            <span class="badge bg-light text-primary border border-primary border-opacity-25 py-2 px-3 small rounded-pill fw-semibold">
+                <i class="bi bi-shield-check me-1"></i> Project Monitoring System
+            </span>
+        </div>
 
         <!-- Center / Quick Navigation Links -->
         <div class="d-none d-md-flex align-items-center ms-3">

@@ -2,8 +2,18 @@
 <aside id="sidebar">
     <!-- Brand / Logo Header -->
     <a href="{% url 'home' %}" class="sidebar-brand">
-        <img src="{% static 'img/logo.webp' %}" alt="ORVEXA" class="border border-white border-opacity-25 shadow-sm">
-        <span style="font-family: 'Jost', sans-serif;">ORVEXA</span>
+        <div class="sidebar-brand-logo">
+            <img src="{% static 'img/logo.webp' %}" 
+                 alt="ORVEXA Logo" 
+                 width="48" 
+                 height="48"
+                 class="sidebar-logo-img"
+                 style="width: 48px; height: 48px; max-width: 48px; max-height: 48px; object-fit: contain;">
+        </div>
+        <div class="sidebar-brand-text">
+            <span class="brand-title">ORVEXA</span>
+            <span class="brand-tagline">Manage Smarter. Achieve More.</span>
+        </div>
     </a>
 
     <!-- Sidebar Navigation Links -->

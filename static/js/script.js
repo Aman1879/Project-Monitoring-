@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
     if (sidebarToggle && sidebar) {
         sidebarToggle.addEventListener('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             sidebar.classList.toggle('show');
+            sidebar.classList.toggle('toggled');
         });
     }
 
@@ -19,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (window.innerWidth < 992 && sidebar && sidebarToggle) {
             if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
                 sidebar.classList.remove('show');
+                sidebar.classList.remove('toggled');
             }
         }
     });
