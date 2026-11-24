@@ -75,13 +75,13 @@ h1, h2, h3, h4, h5, h6, .font-headline, .font-title {
 }
 
 #sidebar .sidebar-brand img {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     object-fit: contain;
     border-radius: 50%;
     margin-right: 0.75rem;
     background: #ffffff;
-    padding: 2px;
+    padding: 1px;
 }
 
 #sidebar .nav-item {
