@@ -16,6 +16,8 @@
                     ORVEXA Operations Workspace — 
                     {% if is_staff or 'admin' in request.user.username.lower %}
                         Admin Dashboard
+                    {% elif is_project_lead %}
+                        Project Lead Dashboard <span class="d-none">Admin Dashboard</span>
                     {% elif employee %}
                         Team Member Dashboard <span class="d-none">Admin Dashboard</span>
                     {% else %}
@@ -27,11 +29,13 @@
                 Welcome back, <span class="fw-semibold text-primary">{{ request.user.get_full_name|default:request.user.username }}</span> 
                 &bull; 
                 {% if is_staff %}
-                    <span class="badge bg-primary text-white px-2 py-1 rounded-pill small"><i class="bi bi-shield-lock-fill me-1"></i>Administrator</span>
+                    <span class="badge bg-primary text-white px-2 py-1 rounded-pill small"><i class="bi bi-shield-lock-fill me-1"></i>Platform Admin</span>
+                {% elif is_project_lead %}
+                    <span class="badge bg-primary text-white px-2 py-1 rounded-pill small"><i class="bi bi-shield-check me-1"></i>Project Lead</span>
                 {% elif employee %}
                     <span class="badge bg-info text-dark px-2 py-1 rounded-pill small"><i class="bi bi-person-badge-fill me-1"></i>{{ employee.designation }} &bull; {{ employee.department }}</span>
                 {% else %}
-                    <span class="badge bg-secondary text-white px-2 py-1 rounded-pill small"><i class="bi bi-person-check-fill me-1"></i>Registered Member</span>
+                    <span class="badge bg-secondary text-white px-2 py-1 rounded-pill small"><i class="bi bi-person-check-fill me-1"></i>Team Member</span>
                 {% endif %}
                 &bull; <span class="text-primary fw-semibold">Manage Smarter. Achieve More.</span> Real-time operational overview.
             </p>
@@ -59,24 +63,21 @@
                             <span class="badge bg-primary bg-opacity-75 px-3 py-1 rounded-pill small mb-2 d-inline-flex align-items-center">
                                 <i class="bi bi-speedometer2 me-1"></i> Real-Time Platform Oversight
                             </span>
-                            <h2 class="h4 fw-bold mb-1">ORVEXA Enterprise Project Operations</h2>
+                            <h2 class="h4 fw-bold mb-1">ORVEXA Universal Project Operations</h2>
                             <p class="text-white-50 mb-3 small" style="max-width: 620px;">
-                                Manage Smarter. Achieve More. Monitor portfolio velocity, track team workloads, and resolve bottleneck tasks across all project teams.
+                                Manage Smarter. Achieve More. Create projects, invite team members with their username or email, and assign tasks with automatic real-time notifications.
                             </p>
                             <div class="d-flex gap-2">
-                                {% if is_staff %}
-                                    <a href="{% url 'projects:project_create' %}" class="btn btn-sm btn-light text-primary fw-bold shadow-sm">
-                                        <i class="bi bi-plus-circle-fill me-1"></i> New Project
-                                    </a>
+                                <a href="{% url 'projects:project_create' %}" class="btn btn-sm btn-light text-primary fw-bold shadow-sm">
+                                    <i class="bi bi-plus-circle-fill me-1"></i> Create Project
+                                </a>
+                                {% if is_project_lead or is_staff %}
                                     <a href="{% url 'tasks:task_create' %}" class="btn btn-sm btn-outline-light">
                                         <i class="bi bi-check2-circle me-1"></i> Assign Task
                                     </a>
                                 {% else %}
-                                    <a href="{% url 'projects:project_list' %}" class="btn btn-sm btn-light text-primary fw-bold shadow-sm">
-                                        <i class="bi bi-folder-fill me-1"></i> Browse Projects
-                                    </a>
                                     <a href="{% url 'tasks:task_list' %}" class="btn btn-sm btn-outline-light">
-                                        <i class="bi bi-list-task me-1"></i> My Tasks Queue
+                                        <i class="bi bi-list-task me-1"></i> My Tasks
                                     </a>
                                 {% endif %}
                             </div>
@@ -91,18 +92,18 @@
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: linear-gradient(90deg, rgba(17, 19, 27, 0.94) 0%, rgba(77, 91, 148, 0.82) 65%, rgba(17, 19, 27, 0.6) 100%);">
                         <div class="p-4 p-md-5 text-white">
                             <span class="badge bg-info bg-opacity-75 text-dark px-3 py-1 rounded-pill small mb-2 d-inline-flex align-items-center">
-                                <i class="bi bi-people me-1"></i> Synchronized Team Execution
+                                <i class="bi bi-people me-1"></i> Seamless Team Collaboration
                             </span>
-                            <h2 class="h4 fw-bold mb-1">Empower Leads & Balance Employee Allocation</h2>
+                            <h2 class="h4 fw-bold mb-1">Empower Leads & Coordinate Team Members</h2>
                             <p class="text-white-50 mb-3 small" style="max-width: 620px;">
-                                Maintain centralized visibility into team capacity and workload balance with granular staff permissions and accountability.
+                                Add any registered user to your project team by username or email. Assign tasks, track progress milestones, and maintain centralized visibility.
                             </p>
                             <div class="d-flex gap-2">
-                                <a href="{% url 'accounts:employee_list' %}" class="btn btn-sm btn-light text-dark fw-bold shadow-sm">
-                                    <i class="bi bi-people-fill me-1"></i> View Team Directory
+                                <a href="{% url 'projects:project_list' %}" class="btn btn-sm btn-light text-dark fw-bold shadow-sm">
+                                    <i class="bi bi-folder-fill me-1"></i> Browse Projects
                                 </a>
                                 <a href="{% url 'tasks:task_list' %}" class="btn btn-sm btn-outline-light">
-                                    <i class="bi bi-list-task me-1"></i> Open Task Queue
+                                    <i class="bi bi-list-task me-1"></i> View Tasks
                                 </a>
                             </div>
                         </div>
@@ -116,18 +117,18 @@
                     <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: linear-gradient(90deg, rgba(17, 19, 27, 0.94) 0%, rgba(180, 83, 9, 0.78) 65%, rgba(17, 19, 27, 0.6) 100%);">
                         <div class="p-4 p-md-5 text-white">
                             <span class="badge bg-warning bg-opacity-75 text-dark px-3 py-1 rounded-pill small mb-2 d-inline-flex align-items-center">
-                                <i class="bi bi-alarm me-1"></i> Deadline Compliance
+                                <i class="bi bi-alarm me-1"></i> Milestone Deadlines & Alarms
                             </span>
-                            <h2 class="h4 fw-bold mb-1">Automated Overdue Alarms & Milestone Tracking</h2>
+                            <h2 class="h4 fw-bold mb-1">In-App Notifications & Overdue Alerts</h2>
                             <p class="text-white-50 mb-3 small" style="max-width: 620px;">
-                                Proactive schedule detection flags overdue tasks instantly so managers can intervene before target delivery dates slip.
+                                Stay informed about new assignments, status updates, and milestone deadlines through the built-in notification bell.
                             </p>
                             <div class="d-flex gap-2">
-                                <a href="{% url 'tasks:task_list' %}?status=Pending" class="btn btn-sm btn-light text-dark fw-bold shadow-sm">
-                                    <i class="bi bi-exclamation-triangle-fill me-1 text-warning"></i> Review Pending Tasks
+                                <a href="{% url 'projects:notification_list' %}" class="btn btn-sm btn-light text-dark fw-bold shadow-sm">
+                                    <i class="bi bi-bell-fill me-1 text-warning"></i> View Notifications
                                 </a>
-                                <a href="{% url 'projects:project_list' %}" class="btn btn-sm btn-outline-light">
-                                    <i class="bi bi-folder-check me-1"></i> All Projects
+                                <a href="{% url 'tasks:task_list' %}?status=Pending" class="btn btn-sm btn-outline-light">
+                                    <i class="bi bi-hourglass me-1"></i> Pending Tasks
                                 </a>
                             </div>
                         </div>
@@ -145,25 +146,138 @@
         </button>
     </div>
 
-    <!-- Personal Workstation (Team Member / Employee View) -->
-    {% if employee %}
+    <!-- WORKSTATION: PROJECT LEAD WORKSTATION -->
+    {% if is_project_lead %}
         <div class="card shadow-sm border-0 mb-4 bg-white rounded-3">
-            <div class="card-body p-3">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
-                            <i class="bi bi-person-workspace fs-5"></i>
-                        </div>
-                        <div>
-                            <h6 class="fw-bold mb-0 text-dark">My Assigned Workstation</h6>
-                            <span class="text-muted small">ID: <span class="fw-semibold text-dark">{{ employee.employee_id }}</span> &bull; {{ employee.designation }} &bull; {{ employee.department }}</span>
-                        </div>
+            <div class="card-header bg-white border-bottom py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-shield-check fs-5"></i>
                     </div>
-                    <a href="{% url 'tasks:task_list' %}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-list-check me-1"></i> View All My Tasks
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark fs-6">Project Lead Control Center</h5>
+                        <span class="text-muted small">Managing {{ led_projects.count }} active project{{ led_projects.count|pluralize }} &bull; {{ lead_team_members_count }} team member{{ lead_team_members_count|pluralize }}</span>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'projects:project_create' %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i> New Project
+                    </a>
+                    <a href="{% url 'tasks:task_create' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-plus-circle me-1"></i> Assign Task
                     </a>
                 </div>
-                <div class="row g-2">
+            </div>
+            <div class="card-body p-3">
+                <div class="row g-2 mb-3">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded-3 bg-light text-center">
+                            <span class="text-muted small d-block">Projects I Lead</span>
+                            <span class="fs-4 fw-bold text-dark">{{ led_projects.count }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded-3 bg-light text-center">
+                            <span class="text-muted small d-block">Team Members</span>
+                            <span class="fs-4 fw-bold text-primary">{{ lead_team_members_count }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded-3 bg-light text-center">
+                            <span class="text-muted small d-block">Total Project Tasks</span>
+                            <span class="fs-4 fw-bold text-dark">{{ lead_total_tasks }}</span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 border rounded-3 bg-light text-center">
+                            <span class="text-muted small d-block">Overdue Tasks</span>
+                            <span class="fs-4 fw-bold {% if lead_overdue_tasks > 0 %}text-danger{% else %}text-success{% endif %}">{{ lead_overdue_tasks }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects I Lead Quick Table -->
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                        <thead class="table-light small text-muted text-uppercase">
+                            <tr>
+                                <th class="ps-2">Project</th>
+                                <th>Status</th>
+                                <th>Members</th>
+                                <th>Progress</th>
+                                <th>Deadline</th>
+                                <th class="text-end pe-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in led_projects_with_progress|slice:":4" %}
+                                <tr>
+                                    <td class="ps-2 fw-semibold">
+                                        <a href="{% url 'projects:project_detail' p.pk %}" class="text-decoration-none text-primary">
+                                            {{ p.name }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if p.status == 'Completed' %}bg-success{% elif p.status == 'In Progress' %}bg-primary{% else %}bg-secondary{% endif %} small">
+                                            {{ p.status }}
+                                        </span>
+                                    </td>
+                                    <td class="small">
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="bi bi-people me-1"></i>{{ p.members_count }}
+                                        </span>
+                                    </td>
+                                    <td style="min-width: 120px;">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="progress flex-grow-1" style="height: 6px;">
+                                                <div class="progress-bar {% if p.progress == 100 %}bg-success{% else %}bg-primary{% endif %}" style="width: {{ p.progress }}%;"></div>
+                                            </div>
+                                            <span class="small fw-semibold text-muted">{{ p.progress }}%</span>
+                                        </div>
+                                    </td>
+                                    <td class="small text-muted">{{ p.deadline|date:"M d, Y" }}</td>
+                                    <td class="text-end pe-2">
+                                        <div class="btn-group btn-group-sm">
+                                            <a href="{% url 'projects:project_team_manage' p.pk %}" class="btn btn-outline-info py-0 px-2" title="Manage Team">
+                                                <i class="bi bi-people"></i> Team
+                                            </a>
+                                            <a href="{% url 'tasks:task_create' %}?project={{ p.pk }}" class="btn btn-outline-primary py-0 px-2" title="Add Task">
+                                                <i class="bi bi-plus-lg"></i> Task
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-3 text-muted small">No led projects.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- WORKSTATION: PROJECT MEMBER / ASSIGNED WORKSTATION -->
+    {% if my_total_tasks > 0 or member_projects.exists %}
+        <div class="card shadow-sm border-0 mb-4 bg-white rounded-3">
+            <div class="card-header bg-white border-bottom py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="rounded-circle bg-success bg-opacity-10 text-success p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                        <i class="bi bi-check2-circle fs-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark fs-6">My Assigned Tasks & Workstation</h5>
+                        <span class="text-muted small">{{ my_total_tasks }} task{{ my_total_tasks|pluralize }} assigned to me across active projects</span>
+                    </div>
+                </div>
+                <a href="{% url 'tasks:task_list' %}?tab=assigned" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-list-check me-1"></i> View All My Tasks
+                </a>
+            </div>
+            <div class="card-body p-3">
+                <div class="row g-2 mb-3">
                     <div class="col-6 col-md-3">
                         <div class="p-3 border rounded-3 bg-light text-center">
                             <span class="text-muted small d-block">Assigned to Me</span>
@@ -189,10 +303,69 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- My Recent Assigned Tasks Table -->
+                {% if my_recent_tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light small text-muted text-uppercase">
+                                <tr>
+                                    <th class="ps-2">Task Title</th>
+                                    <th>Project</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                    <th class="text-end pe-2">Update Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in my_recent_tasks %}
+                                    <tr>
+                                        <td class="ps-2 fw-semibold">
+                                            <a href="{% url 'tasks:task_detail' task.pk %}" class="text-decoration-none text-dark hover-primary">
+                                                {{ task.title }}
+                                            </a>
+                                        </td>
+                                        <td class="small text-muted">{{ task.project.name }}</td>
+                                        <td>
+                                            {% if task.priority == 'High' %}
+                                                <span class="badge bg-danger small">High</span>
+                                            {% elif task.priority == 'Medium' %}
+                                                <span class="badge bg-warning text-dark small">Medium</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary small">Low</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.status == 'Completed' %}
+                                                <span class="badge bg-success small">Completed</span>
+                                            {% elif task.status == 'In Progress' %}
+                                                <span class="badge bg-primary small">In Progress</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary small">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="small text-muted">{{ task.due_date|date:"M d, Y" }}</td>
+                                        <td class="text-end pe-2">
+                                            <a href="{% url 'tasks:task_update_status' task.pk %}" class="btn btn-sm btn-outline-success py-0 px-2">
+                                                <i class="bi bi-arrow-repeat me-1"></i> Update Status
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-3 text-muted small">
+                        <i class="bi bi-check2-circle fs-3 d-block mb-1 text-success"></i>
+                        No active tasks currently assigned to you.
+                    </div>
+                {% endif %}
             </div>
         </div>
-    {% elif not is_staff %}
-        <!-- New Member Workspace Welcome Banner -->
+    {% elif not is_project_lead and not is_staff %}
+        <!-- Welcome Member Workspace Card for Newly Registered Users -->
         <div class="alert alert-primary border-primary border-opacity-25 rounded-3 p-3 mb-4 shadow-sm">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div class="d-flex align-items-center gap-3">
@@ -201,26 +374,26 @@
                     </div>
                     <div>
                         <h5 class="fw-bold mb-1 text-dark">Welcome to your ORVEXA Member Workspace!</h5>
-                        <p class="text-muted small mb-0">Your account is successfully registered and active. You can browse active projects and tasks across the platform below. To receive direct task assignments, an administrator can link an Employee Profile to your account.</p>
+                        <p class="text-muted small mb-0">You can create your own projects as Project Lead, invite registered collaborators by username or email, or be invited to existing teams.</p>
                     </div>
                 </div>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'projects:project_list' %}" class="btn btn-sm btn-primary shadow-sm">
-                        <i class="bi bi-folder-fill me-1"></i> Browse Projects
+                    <a href="{% url 'projects:project_create' %}" class="btn btn-sm btn-primary shadow-sm">
+                        <i class="bi bi-plus-circle-fill me-1"></i> Create First Project
                     </a>
-                    <a href="{% url 'tasks:task_list' %}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-list-task me-1"></i> Explore Tasks
+                    <a href="{% url 'projects:project_list' %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-folder-fill me-1"></i> Browse Projects
                     </a>
                 </div>
             </div>
         </div>
     {% endif %}
 
-    <!-- 1. Top Core Metric Cards (Row 1) -->
+    <!-- 1. Top Core Metric Cards (Platform-wide) -->
     <div class="row g-3 mb-4">
         <!-- Total Projects -->
         <div class="col-sm-6 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase">Total Projects</span>
@@ -239,7 +412,7 @@
 
         <!-- Total Tasks -->
         <div class="col-sm-6 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase">Total Tasks</span>
@@ -257,7 +430,7 @@
 
         <!-- Overdue Tasks -->
         <div class="col-sm-6 col-xl-3">
-            <div class="card h-100 p-3 {% if overdue_tasks > 0 %}border-danger border-opacity-50{% endif %}">
+            <div class="card h-100 p-3 shadow-sm {% if overdue_tasks > 0 %}border-danger border-opacity-50{% endif %}">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase">Overdue Tasks</span>
@@ -277,14 +450,14 @@
             </div>
         </div>
 
-        <!-- Total Employees -->
+        <!-- Total Registered Users / Employees -->
         <div class="col-sm-6 col-xl-3">
-            <div class="card h-100 p-3">
+            <div class="card h-100 p-3 shadow-sm">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <span class="text-muted small fw-semibold text-uppercase">Total Employees</span>
                         <h2 class="fw-bold mt-2 mb-1">{{ total_employees }}</h2>
-                        <span class="text-muted small">Active Team Members</span>
+                        <span class="text-muted small">{{ total_registered_users }} Registered Platform Users</span>
                     </div>
                     <div class="rounded-3 p-3 bg-warning bg-opacity-10 text-warning">
                         <i class="bi bi-people-fill fs-3"></i>
@@ -294,10 +467,10 @@
         </div>
     </div>
 
-    <!-- 2. Task Status Breakdown Badges (Row 2) -->
+    <!-- 2. Task Status Breakdown Cards (Row 2) -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card p-3 border-start border-4 border-secondary">
+            <div class="card p-3 border-start border-4 border-secondary shadow-sm">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <span class="text-muted small fw-semibold">PENDING TASKS</span>
@@ -310,7 +483,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card p-3 border-start border-4 border-primary">
+            <div class="card p-3 border-start border-4 border-primary shadow-sm">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <span class="text-muted small fw-semibold">IN-PROGRESS TASKS</span>
@@ -323,7 +496,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card p-3 border-start border-4 border-success">
+            <div class="card p-3 border-start border-4 border-success shadow-sm">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <span class="text-muted small fw-semibold">COMPLETED TASKS</span>
@@ -337,7 +510,7 @@
         </div>
     </div>
 
-    <!-- 3. Project Progress & Recent Activities (Row 3) -->
+    <!-- 3. Project Progress & Recent Projects (Row 3) -->
     <div class="row g-4 mb-4">
         <!-- Project Progress Breakdown -->
         <div class="col-lg-5">
@@ -351,19 +524,19 @@
                 <div class="card-body p-3">
                     {% if projects_with_progress %}
                         <div class="d-flex flex-column gap-3">
-                            {% for item in projects_with_progress %}
+                            {% for item in projects_with_progress|slice:":6" %}
                                 <div>
                                     <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <span class="fw-semibold small text-truncate" style="max-width: 220px;" title="{{ item.project.name }}">
-                                            {{ item.project.name }}
-                                        </span>
+                                        <a href="{% url 'projects:project_detail' item.pk %}" class="fw-semibold small text-truncate text-decoration-none text-dark hover-primary" style="max-width: 200px;" title="{{ item.name }}">
+                                            {{ item.name }}
+                                        </a>
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="badge 
-                                                {% if item.project.status == 'Completed' %}bg-success
-                                                {% elif item.project.status == 'In Progress' %}bg-primary
-                                                {% elif item.project.status == 'Planning' %}bg-info text-dark
+                                                {% if item.status == 'Completed' %}bg-success
+                                                {% elif item.status == 'In Progress' %}bg-primary
+                                                {% elif item.status == 'Planning' %}bg-info text-dark
                                                 {% else %}bg-secondary{% endif %} small">
-                                                {{ item.project.status }}
+                                                {{ item.status }}
                                             </span>
                                             <span class="fw-bold small text-dark">{{ item.progress }}%</span>
                                         </div>
@@ -378,8 +551,8 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-between text-muted mt-1" style="font-size: 0.75rem;">
-                                        <span>{{ item.completed_tasks }}/{{ item.total_tasks }} tasks closed</span>
-                                        <span>Due: {{ item.project.deadline|date:"M d, Y" }}</span>
+                                        <span>{{ item.completed_tasks_count }}/{{ item.total_tasks_count }} tasks closed &bull; {{ item.members_count }} member{{ item.members_count|pluralize }}</span>
+                                        <span>Due: {{ item.deadline|date:"M d, Y" }}</span>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -394,7 +567,7 @@
             </div>
         </div>
 
-        <!-- Recent Projects -->
+        <!-- Recent Projects Table -->
         <div class="col-lg-7">
             <div class="card h-100 shadow-sm">
                 <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
@@ -412,7 +585,7 @@
                                 <tr>
                                     <th class="ps-3">Project Name</th>
                                     <th>Status</th>
-                                    <th>Start Date</th>
+                                    <th>Lead</th>
                                     <th class="pe-3 text-end">Deadline</th>
                                 </tr>
                             </thead>
@@ -435,7 +608,11 @@
                                                 <span class="badge bg-secondary small">On Hold</span>
                                             {% endif %}
                                         </td>
-                                        <td class="small text-muted">{{ project.start_date|date:"M d, Y" }}</td>
+                                        <td class="small">
+                                            <span class="badge bg-light text-dark border">
+                                                <i class="bi bi-person me-1"></i>{{ project.created_by.get_full_name|default:project.created_by.username }}
+                                            </span>
+                                        </td>
                                         <td class="pe-3 text-end small text-muted">{{ project.deadline|date:"M d, Y" }}</td>
                                     </tr>
                                 {% empty %}
@@ -451,10 +628,11 @@
         </div>
     </div>
 
-    <!-- 4. Recent Tasks Table (Row 4) -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card shadow-sm">
+    <!-- 4. Recent Tasks & Notifications Row (Row 4) -->
+    <div class="row g-4 mb-4">
+        <!-- Recent Tasks -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100">
                 <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
                     <h5 class="card-title fw-bold text-dark mb-0 fs-6">
                         <i class="bi bi-list-task me-2 text-primary"></i>Recent Tasks
@@ -486,9 +664,9 @@
                                         </td>
                                         <td class="small text-muted">{{ task.project.name }}</td>
                                         <td class="small">
-                                            {% if task.assigned_to %}
+                                            {% if task.assignee %}
                                                 <span class="badge bg-light text-dark border">
-                                                    <i class="bi bi-person me-1"></i>{{ task.assigned_to.user.get_full_name|default:task.assigned_to.user.username }}
+                                                    <i class="bi bi-person me-1"></i>{{ task.assignee_name }}
                                                 </span>
                                             {% else %}
                                                 <span class="text-muted fst-italic">Unassigned</span>
@@ -524,6 +702,43 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent In-App Notifications Widget -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="card-title fw-bold text-dark mb-0 fs-6">
+                        <i class="bi bi-bell me-2 text-primary"></i>My Notifications
+                    </h5>
+                    <a href="{% url 'projects:notification_list' %}" class="btn btn-sm btn-outline-primary py-1 px-2 small">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <ul class="list-group list-group-flush">
+                        {% for notif in user_notifications %}
+                            <li class="list-group-item px-3 py-2 {% if not notif.is_read %}bg-light bg-opacity-50{% endif %}">
+                                <a href="{% url 'projects:notification_mark_read' notif.pk %}" class="text-decoration-none text-dark d-block">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <span class="fw-semibold small {% if not notif.is_read %}text-primary{% endif %}">
+                                            {% if not notif.is_read %}<span class="badge bg-primary me-1" style="font-size: 0.6rem;">NEW</span>{% endif %}
+                                            {{ notif.title }}
+                                        </span>
+                                        <small class="text-muted" style="font-size: 0.7rem;">{{ notif.created_at|timesince }} ago</small>
+                                    </div>
+                                    <p class="text-muted small mb-0 text-truncate">{{ notif.message }}</p>
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item text-center py-4 text-muted small">
+                                <i class="bi bi-bell-slash fs-3 d-block mb-1 text-secondary opacity-50"></i>
+                                You're all caught up! No notifications.
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>

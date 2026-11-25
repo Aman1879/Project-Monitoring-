@@ -38,9 +38,25 @@ if ENV_ALLOWED_HOSTS:
 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost',
+    'http://127.0.0.1',
 ]
 if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+
+ENV_CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS')
+if ENV_CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.extend([o.strip() for o in ENV_CSRF_TRUSTED_ORIGINS.split(',') if o.strip()])
+
+# Session & CSRF Cookie Settings
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+else:
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
 
 
 # Application definition
@@ -82,6 +98,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'projects.context_processors.notification_context',
             ],
         },
     },

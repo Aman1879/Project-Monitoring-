@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from accounts.models import Employee
-from projects.models import Project
+from projects.models import Project, ProjectMembership, Notification
 from tasks.models import Task
 
 
@@ -318,3 +318,134 @@ class TaskManagementTests(TestCase):
         resp_status = self.client.get(reverse('tasks:task_list'), {'status': 'In Progress'})
         self.assertContains(resp_status, 'Frontend UI Mockup')
         self.assertNotContains(resp_status, 'Backend Database API')
+
+
+class TaskCollaborationTests(TestCase):
+    def setUp(self):
+        # 1. Project Lead
+        self.lead = User.objects.create_user(
+            username='lead_user',
+            password='Password123!',
+            first_name='Lead',
+            last_name='User'
+        )
+
+        # 2. Member User
+        self.member = User.objects.create_user(
+            username='member_user',
+            password='Password123!',
+            first_name='Member',
+            last_name='User'
+        )
+
+        # 3. Another Member User
+        self.member_two = User.objects.create_user(
+            username='member_two',
+            password='Password123!',
+            first_name='Member',
+            last_name='Two'
+        )
+
+        # 4. Outsider (Non-member)
+        self.outsider = User.objects.create_user(
+            username='outsider_user',
+            password='Password123!'
+        )
+
+        # 5. Project
+        self.project = Project.objects.create(
+            name='Universal App Workspace',
+            description='Project for testing universal collaboration',
+            start_date=date.today(),
+            deadline=date.today() + timedelta(days=30),
+            status='In Progress',
+            created_by=self.lead
+        )
+        ProjectMembership.objects.create(project=self.project, user=self.lead, role='Lead', is_active=True)
+        ProjectMembership.objects.create(project=self.project, user=self.member, role='Member', is_active=True)
+        ProjectMembership.objects.create(project=self.project, user=self.member_two, role='Member', is_active=True)
+
+        # 6. Task assigned to self.member
+        self.task = Task.objects.create(
+            title='Build Authentication Module',
+            description='Implement secure authentication',
+            project=self.project,
+            assigned_user=self.member,
+            priority='High',
+            status='Pending',
+            start_date=date.today(),
+            due_date=date.today() + timedelta(days=7)
+        )
+
+    def test_lead_can_create_task_and_assign_to_project_member(self):
+        """Project Lead can create a task and assign it to an enrolled member, triggering notification."""
+        self.client.force_login(self.lead)
+        post_data = {
+            'title': 'Design UX Wireframes',
+            'description': 'Mobile and desktop mockups',
+            'project': self.project.pk,
+            'assigned_user': self.member_two.pk,
+            'priority': 'Medium',
+            'status': 'Pending',
+            'start_date': str(date.today()),
+            'due_date': str(date.today() + timedelta(days=5)),
+        }
+        response = self.client.post(reverse('tasks:task_create'), post_data)
+        new_task = Task.objects.get(title='Design UX Wireframes')
+        self.assertRedirects(response, reverse('tasks:task_detail', args=[new_task.pk]))
+        self.assertEqual(new_task.assigned_user, self.member_two)
+
+        # Verify notification was generated for the assigned member
+        notif = Notification.objects.filter(recipient=self.member_two).first()
+        self.assertIsNotNone(notif)
+        self.assertEqual(notif.notification_type, 'task_assignment')
+        self.assertEqual(notif.related_task, new_task)
+
+    def test_assigning_task_to_non_member_fails_validation(self):
+        """Backend validation prevents assigning tasks to users not enrolled in the project."""
+        self.client.force_login(self.lead)
+        post_data = {
+            'title': 'Unauthorized Assignment Task',
+            'description': 'Trying to assign non-member',
+            'project': self.project.pk,
+            'assigned_user': self.outsider.pk,
+            'priority': 'Low',
+            'status': 'Pending',
+            'start_date': str(date.today()),
+            'due_date': str(date.today() + timedelta(days=5)),
+        }
+        response = self.client.post(reverse('tasks:task_create'), post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.context['form'].has_error('assigned_user'))
+        self.assertFalse(Task.objects.filter(title='Unauthorized Assignment Task').exists())
+
+    def test_assigned_member_updates_task_status_and_notifies_lead(self):
+        """Assigned project member can update task status and Project Lead receives in-app notification."""
+        self.client.force_login(self.member)
+        post_data = {'status': 'Completed'}
+        response = self.client.post(reverse('tasks:task_update_status', args=[self.task.pk]), post_data)
+        self.assertRedirects(response, reverse('tasks:task_detail', args=[self.task.pk]))
+        self.task.refresh_from_db()
+        self.assertEqual(self.task.status, 'Completed')
+
+        # Verify lead received status update notification
+        notif = Notification.objects.filter(recipient=self.lead, notification_type='task_status_update').first()
+        self.assertIsNotNone(notif)
+        self.assertIn('Completed', notif.message)
+
+    def test_assigned_member_cannot_update_other_members_task_status(self):
+        """A project member cannot update tasks assigned to another member."""
+        self.client.force_login(self.member_two)
+        response = self.client.post(reverse('tasks:task_update_status', args=[self.task.pk]), {'status': 'Completed'})
+        self.assertEqual(response.status_code, 403)
+
+    def test_assigned_member_cannot_edit_full_task_details_or_delete(self):
+        """Members cannot edit full specifications or delete tasks; only Leads/Admins can."""
+        self.client.force_login(self.member)
+        # Edit attempt
+        resp_edit = self.client.get(reverse('tasks:task_update', args=[self.task.pk]))
+        self.assertEqual(resp_edit.status_code, 403)
+        # Delete attempt
+        resp_del = self.client.post(reverse('tasks:task_delete', args=[self.task.pk]))
+        self.assertEqual(resp_del.status_code, 403)
+        self.assertTrue(Task.objects.filter(pk=self.task.pk).exists())

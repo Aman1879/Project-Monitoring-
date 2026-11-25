@@ -2,7 +2,7 @@ from datetime import date, timedelta
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from projects.models import Project
+from projects.models import Project, ProjectMembership, Notification
 from tasks.models import Task
 from accounts.models import Employee
 
@@ -282,3 +282,188 @@ class ProjectCRUDTests(TestCase):
         response = self.client.post(reverse('projects:project_delete', args=[self.project.pk]))
         self.assertRedirects(response, reverse('projects:project_list'))
         self.assertFalse(Project.objects.filter(pk=self.project.pk).exists())
+
+
+class ProjectCollaborationTests(TestCase):
+    def setUp(self):
+        # 1. Non-staff project creator (Student / Freelancer / Lead)
+        self.lead_user = User.objects.create_user(
+            username='lead_alex',
+            email='alex@example.com',
+            password='Password123!',
+            first_name='Alex',
+            last_name='Rivera'
+        )
+
+        # 2. Team member 1
+        self.member_bob = User.objects.create_user(
+            username='member_bob',
+            email='bob@example.com',
+            password='Password123!',
+            first_name='Bob',
+            last_name='Stone'
+        )
+
+        # 3. Team member 2
+        self.member_clara = User.objects.create_user(
+            username='member_clara',
+            email='clara@example.com',
+            password='Password123!',
+            first_name='Clara',
+            last_name='Oswald'
+        )
+
+        # 4. Outsider / non-member
+        self.outsider = User.objects.create_user(
+            username='outsider_dan',
+            email='dan@example.com',
+            password='Password123!'
+        )
+
+        # 5. Project created by lead_alex
+        self.project = Project.objects.create(
+            name='Solaris Analytics',
+            description='Universal collaboration workspace',
+            start_date=date.today(),
+            deadline=date.today() + timedelta(days=45),
+            status='In Progress',
+            created_by=self.lead_user
+        )
+        # Lead membership
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.lead_user,
+            role='Lead',
+            is_active=True
+        )
+
+    def test_normal_registered_user_creates_project_and_becomes_lead(self):
+        """Any regular registered user can create a project and automatically becomes the Project Lead."""
+        self.client.force_login(self.member_bob)
+        post_data = {
+            'name': 'Bob Freelance Project',
+            'description': 'Student thesis project',
+            'start_date': str(date.today()),
+            'deadline': str(date.today() + timedelta(days=20)),
+            'status': 'Planning',
+        }
+        response = self.client.post(reverse('projects:project_create'), post_data)
+        new_project = Project.objects.get(name='Bob Freelance Project')
+        self.assertRedirects(response, reverse('projects:project_detail', args=[new_project.pk]))
+        self.assertEqual(new_project.created_by, self.member_bob)
+        self.assertTrue(new_project.is_lead(self.member_bob))
+        membership = ProjectMembership.objects.get(project=new_project, user=self.member_bob)
+        self.assertEqual(membership.role, 'Lead')
+
+    def test_lead_adds_team_member_by_username(self):
+        """Project Lead can search and add registered user by username, triggering an in-app notification."""
+        self.client.force_login(self.lead_user)
+        post_data = {'username_or_email': 'member_bob'}
+        response = self.client.post(
+            reverse('projects:project_member_add', args=[self.project.pk]),
+            post_data
+        )
+        self.assertRedirects(response, reverse('projects:project_team_manage', args=[self.project.pk]))
+        self.assertTrue(self.project.is_member(self.member_bob))
+        # Notification check
+        notif = Notification.objects.filter(recipient=self.member_bob).first()
+        self.assertIsNotNone(notif)
+        self.assertEqual(notif.notification_type, 'project_assignment')
+        self.assertEqual(notif.related_project, self.project)
+
+    def test_lead_adds_team_member_by_email(self):
+        """Project Lead can add registered user by email."""
+        self.client.force_login(self.lead_user)
+        post_data = {'username_or_email': 'clara@example.com'}
+        response = self.client.post(
+            reverse('projects:project_member_add', args=[self.project.pk]),
+            post_data
+        )
+        self.assertRedirects(response, reverse('projects:project_team_manage', args=[self.project.pk]))
+        self.assertTrue(self.project.is_member(self.member_clara))
+
+    def test_cannot_add_duplicate_team_member(self):
+        """System prevents duplicate project membership."""
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.member_bob,
+            role='Member',
+            is_active=True
+        )
+        self.client.force_login(self.lead_user)
+        post_data = {'username_or_email': 'member_bob'}
+        response = self.client.post(
+            reverse('projects:project_member_add', args=[self.project.pk]),
+            post_data,
+            follow=True
+        )
+        self.assertContains(response, 'is already an active member of this project')
+        self.assertEqual(ProjectMembership.objects.filter(project=self.project, user=self.member_bob).count(), 1)
+
+    def test_lead_can_remove_team_member(self):
+        """Project Lead can remove a member from the project team."""
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.member_bob,
+            role='Member',
+            is_active=True
+        )
+        self.client.force_login(self.lead_user)
+        response = self.client.post(
+            reverse('projects:project_member_remove', args=[self.project.pk, self.member_bob.id])
+        )
+        self.assertRedirects(response, reverse('projects:project_team_manage', args=[self.project.pk]))
+        self.assertFalse(ProjectMembership.objects.filter(project=self.project, user=self.member_bob).exists())
+
+    def test_non_lead_cannot_manage_team(self):
+        """Project Member cannot access or add users via team management."""
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.member_bob,
+            role='Member',
+            is_active=True
+        )
+        self.client.force_login(self.member_bob)
+        # Attempt to access Manage Team view
+        resp_get = self.client.get(reverse('projects:project_team_manage', args=[self.project.pk]))
+        self.assertEqual(resp_get.status_code, 403)
+
+        # Attempt to post add member
+        resp_post = self.client.post(
+            reverse('projects:project_member_add', args=[self.project.pk]),
+            {'username_or_email': 'member_clara'}
+        )
+        self.assertEqual(resp_post.status_code, 403)
+
+    def test_non_member_cannot_view_project_detail(self):
+        """User who does not belong to a project cannot view its details (403 PermissionDenied)."""
+        self.client.force_login(self.outsider)
+        response = self.client.get(reverse('projects:project_detail', args=[self.project.pk]))
+        self.assertEqual(response.status_code, 403)
+
+    def test_notifications_center_and_mark_as_read(self):
+        """Users can view their notifications and mark them as read."""
+        ProjectMembership.objects.create(
+            project=self.project,
+            user=self.member_bob,
+            role='Member',
+            is_active=True
+        )
+        notif = Notification.objects.create(
+            recipient=self.member_bob,
+            title='Project Added',
+            message='You were added to Solaris Analytics',
+            notification_type='project_assignment',
+            related_project=self.project
+        )
+        self.client.force_login(self.member_bob)
+        # View notification history
+        response = self.client.get(reverse('projects:notification_list'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Solaris Analytics')
+
+        # Click notification to mark read
+        resp_read = self.client.get(reverse('projects:notification_mark_read', args=[notif.pk]))
+        notif.refresh_from_db()
+        self.assertTrue(notif.is_read)
+        self.assertRedirects(resp_read, reverse('projects:project_detail', args=[self.project.pk]))

@@ -41,6 +41,84 @@
         <!-- Right Side: User Profile / Auth Status -->
         <div class="ms-auto d-flex align-items-center gap-2">
             {% if request.user.is_authenticated %}
+                <!-- Notification Bell Dropdown -->
+                <div class="dropdown me-1">
+                    <button class="btn btn-light position-relative rounded-circle border shadow-xs d-flex align-items-center justify-content-center" 
+                            type="button" 
+                            id="notificationBell" 
+                            data-bs-toggle="dropdown" 
+                            aria-expanded="false" 
+                            style="width: 38px; height: 38px;"
+                            title="Notifications">
+                        <i class="bi bi-bell fs-5 text-secondary"></i>
+                        {% if unread_notifications_count > 0 %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.65rem;">
+                                {{ unread_notifications_count }}
+                                <span class="visually-hidden">unread notifications</span>
+                            </span>
+                        {% endif %}
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow border-0 p-0" aria-labelledby="notificationBell" style="width: 320px; max-width: 90vw;">
+                        <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-light rounded-top">
+                            <h6 class="mb-0 fw-bold text-dark fs-6 d-flex align-items-center">
+                                <i class="bi bi-bell-fill text-primary me-2"></i>Notifications
+                                {% if unread_notifications_count > 0 %}
+                                    <span class="badge bg-primary ms-2 small">{{ unread_notifications_count }} New</span>
+                                {% endif %}
+                            </h6>
+                            {% if unread_notifications_count > 0 %}
+                                <form method="POST" action="{% url 'projects:notification_mark_all_read' %}" class="m-0 p-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-link text-primary text-decoration-none p-0 small" style="font-size: 0.75rem;">
+                                        Mark all read
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div class="notification-items" style="max-height: 280px; overflow-y: auto;">
+                            {% for notif in recent_notifications %}
+                                <a href="{% url 'projects:notification_mark_read' notif.pk %}" class="dropdown-item p-3 border-bottom text-wrap d-flex align-items-start gap-2 {% if not notif.is_read %}bg-light bg-opacity-50{% endif %}">
+                                    <div class="rounded-circle p-2 mt-1 d-flex align-items-center justify-content-center flex-shrink-0 
+                                        {% if notif.notification_type == 'task_assignment' %}bg-primary bg-opacity-10 text-primary
+                                        {% elif notif.notification_type == 'project_assignment' %}bg-info bg-opacity-10 text-info
+                                        {% elif notif.notification_type == 'task_status_update' %}bg-success bg-opacity-10 text-success
+                                        {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %}" style="width: 32px; height: 32px;">
+                                        {% if notif.notification_type == 'task_assignment' %}
+                                            <i class="bi bi-check2-circle"></i>
+                                        {% elif notif.notification_type == 'project_assignment' %}
+                                            <i class="bi bi-folder-plus"></i>
+                                        {% elif notif.notification_type == 'task_status_update' %}
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        {% else %}
+                                            <i class="bi bi-bell"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-semibold small text-dark">{{ notif.title }}</span>
+                                            {% if not notif.is_read %}
+                                                <span class="badge bg-primary rounded-circle p-1" style="width: 6px; height: 6px;"></span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-muted small mb-1" style="font-size: 0.8rem; line-height: 1.2;">{{ notif.message }}</p>
+                                        <span class="text-muted" style="font-size: 0.7rem;">{{ notif.created_at|timesince }} ago</span>
+                                    </div>
+                                </a>
+                            {% empty %}
+                                <div class="p-4 text-center text-muted small">
+                                    <i class="bi bi-bell-slash fs-4 d-block mb-1 text-secondary opacity-50"></i>
+                                    No notifications yet.
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="p-2 border-top bg-white text-center rounded-bottom">
+                            <a href="{% url 'projects:notification_list' %}" class="small text-primary fw-semibold text-decoration-none">
+                                View all notifications <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="dropdown">
                     <button class="btn user-profile-badge dropdown-toggle border-0" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="bi bi-person-circle me-1 fs-5 text-primary"></i>

@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Team - {{ project.name }} - ORVEXA{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header with Breadcrumb -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <a href="{% url 'projects:project_detail' project.pk %}" class="text-decoration-none text-muted small d-inline-flex align-items-center mb-1">
+                <i class="bi bi-arrow-left me-1"></i> Back to {{ project.name }}
+            </a>
+            <h1 class="h3 fw-bold text-dark mb-0 d-flex align-items-center">
+                <i class="bi bi-people-fill text-primary me-2"></i>Manage Project Team
+            </h1>
+            <p class="text-muted small mb-0">Add existing registered users to collaborate on <strong>{{ project.name }}</strong>.</p>
+        </div>
+        <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-outline-secondary btn-sm shadow-sm">
+            <i class="bi bi-eye me-1"></i> View Project
+        </a>
+    </div>
+
+    <!-- Search & Add Member Card -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+            <h5 class="card-title mb-0 fs-6 fw-bold text-dark d-flex align-items-center">
+                <i class="bi bi-person-plus text-primary me-2"></i>Find & Add Team Member
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <form method="GET" action="{% url 'projects:project_team_manage' project.pk %}" class="row g-2 mb-3">
+                <div class="col-md-9">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted border-end-0">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" 
+                               name="q" 
+                               class="form-control border-start-0" 
+                               placeholder="Search registered user by username or email (e.g. alex or alex@example.com)..."
+                               value="{{ search_query|default:'' }}"
+                               autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        <i class="bi bi-search me-1"></i> Search Users
+                    </button>
+                    {% if search_query %}
+                        <a href="{% url 'projects:project_team_manage' project.pk %}" class="btn btn-outline-secondary">
+                            Clear
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <!-- Search Results Display -->
+            {% if search_query %}
+                <div class="border rounded-3 p-3 bg-light">
+                    <h6 class="fw-bold text-dark small text-uppercase mb-2">Search Results for "{{ search_query }}"</h6>
+                    {% if search_results %}
+                        <div class="list-group">
+                            {% for u in search_results %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center py-2 px-3 bg-white mb-1 rounded border">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                            <i class="bi bi-person fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold text-dark d-block">{{ u.get_full_name|default:u.username }}</span>
+                                            <span class="text-muted small">@{{ u.username }} &bull; {{ u.email|default:"No email" }}</span>
+                                        </div>
+                                    </div>
+                                    <form method="POST" action="{% url 'projects:project_member_add' project.pk %}" class="m-0 p-0">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ u.id }}">
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-plus-circle me-1"></i> Add to Team
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-3 text-muted small">
+                            <i class="bi bi-person-x fs-3 d-block text-secondary opacity-50 mb-1"></i>
+                            No matching registered users found. Ensure the user has created an account on ORVEXA first.
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <!-- Direct Add by Exact Username/Email -->
+            <div class="mt-3 pt-3 border-top">
+                <span class="text-muted small d-block mb-2">Or add directly by typing exact username or email:</span>
+                <form method="POST" action="{% url 'projects:project_member_add' project.pk %}" class="row g-2">
+                    {% csrf_token %}
+                    <div class="col-md-9">
+                        <input type="text" 
+                               name="username_or_email" 
+                               class="form-control" 
+                               placeholder="Exact username or email address..." 
+                               required>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-outline-primary w-100 fw-semibold">
+                            <i class="bi bi-person-plus-fill me-1"></i> Add Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Team Members Table -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 fs-6 fw-bold text-dark d-flex align-items-center">
+                <i class="bi bi-people text-primary me-2"></i>Active Team Members ({{ memberships|length }})
+            </h5>
+            <span class="small text-muted">Members authorized to view and receive tasks in this project</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small text-uppercase">
+                        <tr>
+                            <th class="ps-4">Team Member</th>
+                            <th>Username</th>
+                            <th>Email Address</th>
+                            <th>Project Role</th>
+                            <th>Joined Date</th>
+                            <th class="pe-4 text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in memberships %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="rounded-circle bg-light border p-2 d-flex align-items-center justify-content-center text-primary" style="width: 34px; height: 34px;">
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <span class="fw-semibold text-dark">
+                                            {{ m.user.get_full_name|default:m.user.username }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">@{{ m.user.username }}</span>
+                                </td>
+                                <td class="small text-muted">
+                                    {{ m.user.email|default:"—" }}
+                                </td>
+                                <td>
+                                    {% if m.role == 'Lead' or m.user == project.created_by %}
+                                        <span class="badge bg-primary text-white"><i class="bi bi-star-fill me-1 text-warning"></i>Project Lead</span>
+                                    {% else %}
+                                        <span class="badge bg-info text-dark">Project Member</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">
+                                    {{ m.joined_at|date:"M d, Y" }}
+                                </td>
+                                <td class="pe-4 text-end">
+                                    {% if m.user != project.created_by %}
+                                        <form method="POST" action="{% url 'projects:project_member_remove' project.pk m.user.id %}" class="d-inline m-0 p-0" onsubmit="return confirm('Are you sure you want to remove {{ m.user.username }} from the project?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" title="Remove Member">
+                                                <i class="bi bi-person-x me-1"></i> Remove
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <span class="text-muted small fst-italic">Project Creator</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-4 text-muted small">
+                                    No team members added yet. Search above to add your first member!
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -15,7 +15,7 @@
             </h1>
         </div>
         <div class="btn-group shadow-sm">
-            {% if request.user.is_staff %}
+            {% if is_admin or is_lead %}
                 <a href="{% url 'tasks:task_update_status' task.pk %}" class="btn btn-outline-success">
                     <i class="bi bi-arrow-repeat me-1"></i> Change Status
                 </a>
@@ -37,7 +37,7 @@
     <div class="row g-4 mb-4">
         <!-- Overview & Description -->
         <div class="col-lg-8">
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
                         <i class="bi bi-file-earmark-text text-primary me-2"></i>Task Specifications
@@ -63,7 +63,7 @@
 
         <!-- Task Metadata Card -->
         <div class="col-lg-4">
-            <div class="card h-100">
+            <div class="card h-100 shadow-sm">
                 <div class="card-header bg-white py-3">
                     <h5 class="card-title mb-0 fs-6 fw-bold text-dark">
                         <i class="bi bi-info-circle text-primary me-2"></i>Status & Assignment
@@ -74,11 +74,11 @@
                     <div class="mb-3 pb-3 border-bottom">
                         <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Status</span>
                         {% if task.status == 'Completed' %}
-                            <span class="badge bg-success fs-6">Completed</span>
+                            <span class="badge bg-success fs-6"><i class="bi bi-check-circle-fill me-1"></i>Completed</span>
                         {% elif task.status == 'In Progress' %}
-                            <span class="badge bg-primary fs-6">In Progress</span>
+                            <span class="badge bg-primary fs-6"><i class="bi bi-arrow-repeat me-1"></i>In Progress</span>
                         {% else %}
-                            <span class="badge bg-secondary fs-6">Pending</span>
+                            <span class="badge bg-secondary fs-6"><i class="bi bi-hourglass me-1"></i>Pending</span>
                         {% endif %}
                     </div>
 
@@ -102,18 +102,21 @@
                         </a>
                     </div>
 
-                    <!-- Assigned Employee -->
+                    <!-- Assigned Member -->
                     <div class="mb-3 pb-3 border-bottom">
-                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Assigned Employee</span>
-                        {% if task.assigned_to %}
+                        <span class="text-muted small text-uppercase fw-semibold d-block mb-1">Assigned Member</span>
+                        {% if task.assignee %}
                             <div class="d-flex align-items-center mt-1">
-                                <i class="bi bi-person-circle fs-4 text-secondary me-2"></i>
+                                <div class="rounded-circle bg-light border text-primary p-2 d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                </div>
                                 <div>
                                     <span class="fw-bold d-block text-dark">
-                                        {{ task.assigned_to.user.get_full_name|default:task.assigned_to.user.username }}
+                                        {{ task.assignee.get_full_name|default:task.assignee.username }}
                                     </span>
-                                    <span class="badge bg-light text-muted border font-monospace small">
-                                        {{ task.assigned_to.employee_id }} &bull; {{ task.assigned_to.department }}
+                                    <span class="text-muted font-monospace small">
+                                        @{{ task.assignee.username }}
+                                        {% if task.assignee.email %} &bull; {{ task.assignee.email }}{% endif %}
                                     </span>
                                 </div>
                             </div>
@@ -138,4 +141,3 @@
     </div>
 </div>
 {% endblock %}
-

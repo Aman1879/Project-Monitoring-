@@ -10,7 +10,7 @@
             <i class="bi bi-arrow-left me-1"></i> Back to Tasks
         </a>
         <h1 class="h3 fw-bold text-dark mb-1">{{ action_title }}</h1>
-        <p class="text-muted small mb-0">Configure task specifications, priority, deadline, and assign team members.</p>
+        <p class="text-muted small mb-0">Configure task specifications, priority, deadline, and assign enrolled project members.</p>
     </div>
 
     <div class="row">
@@ -59,7 +59,7 @@
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <label for="{{ form.project.id_for_label }}" class="form-label fw-semibold text-secondary small">
-                                    Project <span class="text-danger">*</span>
+                                    Project Workspace <span class="text-danger">*</span>
                                 </label>
                                 {{ form.project }}
                                 {% if form.project.errors %}
@@ -67,17 +67,23 @@
                                         {% for error in form.project.errors %}{{ error }}{% endfor %}
                                     </div>
                                 {% endif %}
+                                <div class="form-text small text-muted">
+                                    Assignee options adapt to the members enrolled in the project.
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="{{ form.assigned_to.id_for_label }}" class="form-label fw-semibold text-secondary small">
-                                    Assign To Employee
+                                <label for="{{ form.assigned_user.id_for_label }}" class="form-label fw-semibold text-secondary small">
+                                    Assign to Project Member
                                 </label>
-                                {{ form.assigned_to }}
-                                {% if form.assigned_to.errors %}
+                                {{ form.assigned_user }}
+                                {% if form.assigned_user.errors %}
                                     <div class="text-danger small mt-1">
-                                        {% for error in form.assigned_to.errors %}{{ error }}{% endfor %}
+                                        {% for error in form.assigned_user.errors %}{{ error }}{% endfor %}
                                     </div>
                                 {% endif %}
+                                <div class="form-text small text-muted">
+                                    Only enrolled members of the project can be assigned.
+                                </div>
                             </div>
                         </div>
 
@@ -150,16 +156,17 @@
 
         <!-- Sidebar Guidelines -->
         <div class="col-lg-4 mt-4 mt-lg-0">
-            <div class="card bg-light border-0">
+            <div class="card bg-light border-0 shadow-sm mb-3">
                 <div class="card-body p-4">
                     <h6 class="fw-bold text-dark mb-2">
-                        <i class="bi bi-info-circle text-primary me-1"></i> Task Management Rules
+                        <i class="bi bi-people text-primary me-1"></i> Team Collaboration Rules
                     </h6>
                     <ul class="text-muted small ps-3 mb-0">
-                        <li class="mb-2"><strong>Due Date Rule:</strong> The task due date cannot be earlier than its start date.</li>
-                        <li class="mb-2"><strong>Assignment:</strong> Assigning a task links it to the employee's personal dashboard.</li>
-                        <li class="mb-2"><strong>Regular Staff Access:</strong> Assigned employees can update their task status (Pending &rarr; In Progress &rarr; Completed) without full edit permissions.</li>
-                        <li><strong>Cascading Progress:</strong> Completing tasks automatically increases the overall completion progress of the associated project.</li>
+                        <li class="mb-2"><strong>Member Assignment:</strong> Tasks can be assigned to any member enrolled in the project, including the Project Lead.</li>
+                        <li class="mb-2"><strong>Adding New People:</strong> If the person you want to assign is not listed, open the project's <em>Manage Team</em> page and add them using their username or email.</li>
+                        <li class="mb-2"><strong>Instant Notification:</strong> Assigned members receive an immediate in-app notification with task specifics.</li>
+                        <li class="mb-2"><strong>Member Status Access:</strong> Assigned members can update task progress (Pending &rarr; In Progress &rarr; Completed) directly from their workstation.</li>
+                        <li><strong>Progress Tracking:</strong> Completed tasks automatically increment the overall project progress meter.</li>
                     </ul>
                 </div>
             </div>
@@ -167,4 +174,3 @@
     </div>
 </div>
 {% endblock %}
-

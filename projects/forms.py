@@ -46,3 +46,18 @@ class ProjectForm(forms.ModelForm):
 
         return cleaned_data
 
+
+class ProjectMemberAddForm(forms.Form):
+    """
+    Form used by Project Leads to add members by username or email.
+    """
+    username_or_email = forms.CharField(
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter username or email address (e.g. alex or alex@example.com)...',
+            'autocomplete': 'off',
+            'autofocus': True,
+        })
+    )
